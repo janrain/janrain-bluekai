@@ -1,0 +1,9 @@
+/env.sh
+*.pyc
+*.zip
+*.log
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
