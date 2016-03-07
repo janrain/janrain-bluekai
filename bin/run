@@ -1,6 +1,8 @@
+#!/usr/bin/env bash
+
 # refer to application documentation
 export DEBUG=true
-export APP_LOG_FILE=logs/application.log
+export APP_LOG_FILE=application.log
 export AWS_QUEUE_TIMEOUT=
 export JANRAIN_URI=
 export JANRAIN_CLIENT_ID=

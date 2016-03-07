@@ -13,4 +13,4 @@
 
 ### Run Application
 
-* `./run.sh`
+* `./bin/run`
