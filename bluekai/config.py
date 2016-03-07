@@ -2,7 +2,7 @@
 import os
 
 # environment variables and their defaults if not defined
-ENV_VARS = {
+_ENV_VARS = {
     'DEBUG': False,
     'APP_LOG_FILE': '/opt/python/log/application.log',
     'APP_LOG_FILESIZE': 10000000,
@@ -19,20 +19,22 @@ ENV_VARS = {
     'UPDATE_PRIORITY_HOURS_LIMIT': 27,
 }
 
-CONFIG = {}
-for key, default_value in ENV_VARS.items():
-    value = os.getenv(key, '')
-    # empty string means use default value
-    if value == '':
-        value = default_value
-    elif isinstance(ENV_VARS[key], bool):
-        if value.upper() != 'FALSE':
-            value = True
-        else:
-            value = False
-    elif isinstance(ENV_VARS[key], int):
-        try:
-            value = int(value)
-        except ValueError:
+def get_config():
+    config = {}
+    for key, default_value in _ENV_VARS.items():
+        value = os.getenv(key, '')
+        # empty string means use default value
+        if value == '':
             value = default_value
-    CONFIG[key] = value
+        elif isinstance(_ENV_VARS[key], bool):
+            if value.upper() != 'FALSE':
+                value = True
+            else:
+                value = False
+        elif isinstance(_ENV_VARS[key], int):
+            try:
+                value = int(value)
+            except ValueError:
+                value = default_value
+        config[key] = value
+    return config
