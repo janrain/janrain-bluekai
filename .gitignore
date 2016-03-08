@@ -2,8 +2,11 @@
 *.pyc
 *.zip
 *.log
+venv/
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+*.coverage

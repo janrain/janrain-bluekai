@@ -1,5 +1,7 @@
 # BlueKai
 
+[![Coverage Status](https://coveralls.io/repos/github/janrain/janrain-bluekai/badge.svg?branch=master)](https://coveralls.io/github/janrain/janrain-bluekai?branch=master)
+
 ## Developement
 
 ### Get Source Code

@@ -1,0 +1,9 @@
+language: python
+python:
+- '2.7'
+script:
+- ./bin/test
+- coveralls
+env:
+  global:
+    secure: IjKSYrWBpTJsS0Yc0cxQZLTymhOOsmrXO/ZIe+lKsm0mqMGgsoMNuM584gJVIloVCAsIYLa4UJvCqugpLE9LTszGiI7FtgZ2asSHQBbO/Lj2RuMdyN978bV4Fd+0aX3iLFuyF2pTrerPYMHuLGd1OFtvKKmjwhWic3QR2CorgQGvOeE1dBwPm8TLme35d3OVBX0AKms7lb2FqgvT2e/7U1dY2P0UEGp72FmfjizxGB3Yn0FQaS76zEiNYpLEbQJZTjlw5Igj4i0o4ziqrgvP27+GNy+rz1f6Zob0+3LIPsvpfi1a3snMLOtbaD9idIDbA/NFjAkDSzmZI2khri0W40n/nuVQb/1fSViQfEkerus3aKbqM/iRK5nc+xr0IKivq4/dygy2jiXHymPXipU+tA7VA07qnqCOtS6EabS7RpTPiAsx8KyAkiqwb1GhzIRPFuCNevlG/a52QtYKz86jorwboi54sWbnSGx+LyYXMmvwUc9hzKCy9T8g0r0QEVsQD7zw/RibNOhVNoiJUtbYvxvODq8tnL65RwAhTHnbJTjwzs+1lX3uRfZ+6oWgY/J6qUp5whfKQBh4iNbBg99XOuQ4vNev0q9v94Hu/bN10F3rlnBYGMI/ow75ynGtEsc3itf4dZtSO6mJ+dPM/ZuzmnRJNIzsQ5aV/LfzyHk8fQM=
