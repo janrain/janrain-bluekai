@@ -16,3 +16,7 @@
 ### Run Application
 
 * `./bin/run`
+
+### Run Tests
+
+* `./bin/test`
