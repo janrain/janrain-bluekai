@@ -4,16 +4,18 @@ import flask
 import logging
 import logging.handlers
 from .config import get_config
+from .resources import export
 #from .actions import sync
 from ._version import __version__
 
 
-def create_app(config):
+def create_app(config, model):
   app = flask.Flask(__name__)
   app.config.update(config)
 
   # add routes
   app.add_url_rule('/', 'root', lambda: 'ok')
+  app.add_url_rule('/export', 'export', export, methods=['POST'])
 
   # add the thread executor to the app
   app.threadexecutor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
@@ -23,6 +25,16 @@ def create_app(config):
       """additional headers for each response"""
       response.headers['X-App-Version'] = __version__
       return response
+
+  app.model = model
+
+  # this is just for convenience during development
+  if app.config['DEBUG'] and not model.exists():
+      # create table with minimal capacity
+      model.create_table(
+          read_capacity_units=1,
+          write_capacity_units=1,
+      )
 
   return app
 
