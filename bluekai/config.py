@@ -7,16 +7,23 @@ _ENV_VARS = {
     'APP_LOG_FILE': '/opt/python/log/application.log',
     'APP_LOG_FILESIZE': 10000000,
     'APP_LOG_NUM_BACKUPS': 20,
+    'AWS_DEFAULT_REGION': '',
+    'AWS_DYNAMODB_TABLE': '',
+    'AWS_DYNAMODB_URL': '',
     'JANRAIN_URI': '',
     'JANRAIN_CLIENT_ID': '',
     'JANRAIN_CLIENT_SECRET': '',
     'JANRAIN_SCHEMA_NAME': 'user',
+    'JANRAIN_BATCH_SIZE': 1000,
     'REMOTE_HOST': '',
-    'REMOTE_PORT': 443,
+    'REMOTE_PORT': 22,
     'REMOTE_USERNAME': '',
     'REMOTE_PASSWORD': '',
     'REMOTE_RSA_KEY': '',
+    'REMOTE_FILE': 'janrain-bluekai.tsv',
     'UPDATE_PRIORITY_HOURS_LIMIT': 27,
+    'SFTP_BUFFER_SIZE': 32768,
+
 }
 
 def get_config():
