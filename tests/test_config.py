@@ -27,4 +27,4 @@ class getConfigTests(TestCase):
     def test_invalid_int(self, getenv_mock):
         getenv_mock.return_value = 'a'
         config = get_config()
-        self.assertEqual(config['REMOTE_PORT'], 443)
+        self.assertEqual(config['REMOTE_PORT'], 22)
