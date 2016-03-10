@@ -1,13 +1,13 @@
 import pynamodb.attributes
-import pynamodb.exceptions
 import pynamodb.models
+from pynamodb.exceptions import DoesNotExist
 from .config import get_config
 from .date_utils import fromModelDateTime
 from .date_utils import toModelDateTime
 
 config = get_config()
 
-class Model(pynamodb.models.Model):
+class JobModel(pynamodb.models.Model):
     """DyanmoDB table structure."""
 
     class Meta:
@@ -16,27 +16,29 @@ class Model(pynamodb.models.Model):
         host = config['AWS_DYNAMODB_URL']
 
     app_id = pynamodb.attributes.UnicodeAttribute(hash_key=True)
-    last_updated = pynamodb.attributes.NumberAttribute()
+    _last_updated = pynamodb.attributes.NumberAttribute()
 
-    def update(self, last_updated):
-      self.last_updated = last_updated
-      self.save()
+    @property
+    def lastUpdated(self):
+        last_updated = self._last_updated or 0
+        return fromModelDateTime(last_updated)
 
-def loadLastUpdated(modelClass, config):
-    item = getItem(modelClass, config)
-    last_updated = item.last_updated or 0
-    return fromModelDateTime(last_updated)
+    @lastUpdated.setter
+    def lastUpdated(self, last_updated):
+        self._last_updated = last_updated
+        self.save()
 
-def saveLastUpdated(modelClass, config, lastUpdated):
-    item = getItem(modelClass, config)
-    item.update(toModelDateTime(lastUpdated))
+    @classmethod
+    def get(cls, config):
+        app_id = cls.appId(config)
+        try:
+          return super(JobModel, cls).get(app_id)
+        except DoesNotExist:
+          return cls(app_id)
 
-def appId(config):
-    return "{}:{}".format(config['JANRAIN_URI'], config['JANRAIN_SCHEMA_NAME'])
+    @classmethod
+    def appId(cls, config):
+        janrain_uri = config.get('JANRAIN_URI')
+        janrain_schema_name = config.get('JANRAIN_SCHEMA_NAME')
+        return "{}:{}".format(janrain_uri, janrain_schema_name)
 
-def getItem(modelClass, config):
-    app_id = appId(config)
-    try:
-        return modelClass.get(app_id)
-    except DoesNotExist:
-        return modelClass(app_id)

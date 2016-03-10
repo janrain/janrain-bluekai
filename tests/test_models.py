@@ -13,6 +13,6 @@ class models_test(TestCase):
         }
 
     def test_appId(self):
-        actual = appId(self.config)
+        actual = JobModel.appId(self.config)
         expected = "{}:{}".format(self.config['JANRAIN_URI'], self.config['JANRAIN_SCHEMA_NAME'])
         self.assertEqual(actual, expected)

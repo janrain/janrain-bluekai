@@ -3,10 +3,10 @@
 from bluekai import create_app
 from bluekai import logging_init
 from bluekai import get_config
-from bluekai.models import Model
+from bluekai.models import JobModel
 
 if __name__ == '__main__':
     config = get_config()
-    application = create_app(config, Model)
+    application = create_app(config, JobModel)
     logging_init(application)
     application.run()
