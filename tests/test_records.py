@@ -13,11 +13,10 @@ class models_test(TestCase):
         records_iterator_mock = Mock()
 
         capture_schema_mock = Mock()
-        capture_schema_mock.records = Mock()
-        capture_schema_mock.records.iterator = Mock(return_value=records_iterator_mock)
+        capture_schema_mock.records.iterator.return_value = records_iterator_mock
 
         capture_app_mock = Mock()
-        capture_app_mock.get_schema = Mock(return_value=capture_schema_mock)
+        capture_app_mock.get_schema.return_value = capture_schema_mock
 
         datetime_now = datetime.utcfromtimestamp(0)
         config = {
@@ -40,11 +39,10 @@ class models_test(TestCase):
         records_iterator_mock = Mock()
 
         capture_schema_mock = Mock()
-        capture_schema_mock.records = Mock()
-        capture_schema_mock.records.iterator = Mock(return_value=records_iterator_mock)
+        capture_schema_mock.records.iterator.return_value = records_iterator_mock
 
         capture_app_mock = Mock()
-        capture_app_mock.get_schema = Mock(return_value=capture_schema_mock)
+        capture_app_mock.get_schema.return_value = capture_schema_mock
 
         datetime_now = datetime.utcfromtimestamp(0)
         config = {
