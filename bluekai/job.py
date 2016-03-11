@@ -1,7 +1,8 @@
 from .date_utils import fromRecordDateTime
 from .date_utils import toRecordDateTime
+from .records import recordsNewerThan
 
-def run(JobModel, writter, config, logger, records_iterator, converter):
+def run(JobModel, writter, config, logger, datalib, converter):
 
     logger.info("start")
 
@@ -11,6 +12,12 @@ def run(JobModel, writter, config, logger, records_iterator, converter):
         job = JobModel.get(config)
         last_updated = job.lastUpdated
 
+        capture_app = datalib.get_app(
+            config['JANRAIN_URI'],
+            config['JANRAIN_CLIENT_ID'],
+            config['JANRAIN_CLIENT_SECRET'])
+
+        records_iterator = recordsNewerThan(capture_app, config, last_updated)
 
         with writter as fp:
 
