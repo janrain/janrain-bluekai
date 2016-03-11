@@ -1,6 +1,7 @@
 import flask
 import logging
 import json
+import paramiko
 import janrain_datalib
 import janrain_datalib.exceptions
 import janrain_datalib.utils
@@ -30,7 +31,7 @@ def export():
 
     new_records_iterator = recordsNewerThan(capture_app, config, last_updated)
 
-    sftp = SftpProxy(config, logger)
+    sftp = SftpProxy(paramiko, config, logger)
     writter = sftp.file(config['REMOTE_FILE'], mode='w', bufsize=config['SFTP_BUFFER_SIZE'])
 
     if job.start():

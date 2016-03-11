@@ -1,10 +1,8 @@
 """Sftp proxy"""
-import io
-import paramiko
 
 class SftpProxy:
 
-    def __init__(self, config, logger):
+    def __init__(self, paramiko, config, logger):
         # connect to remote
         remote = (config['REMOTE_HOST'], config['REMOTE_PORT'])
         self.transport = paramiko.Transport(remote)
