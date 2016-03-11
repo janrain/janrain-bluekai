@@ -1,5 +1,6 @@
 # BlueKai
 
+[![Build Status](https://travis-ci.org/janrain/janrain-bluekai.svg?branch=master)](https://travis-ci.org/janrain/janrain-bluekai)
 [![Coverage Status](https://coveralls.io/repos/github/janrain/janrain-bluekai/badge.svg?branch=master)](https://coveralls.io/github/janrain/janrain-bluekai?branch=master)
 
 ## Developement
