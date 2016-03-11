@@ -6,4 +6,4 @@ mock==1.3.0
 janrain-datalib==0.1.3
 pynamodb==1.4.4
 paramiko==1.15.2
-freezegun=0.3.6
+freezegun==0.3.6
