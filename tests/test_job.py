@@ -2,7 +2,9 @@
 from unittest import TestCase
 from mock import patch
 from mock import Mock
+from mock import MagicMock
 from mock import call
+from datetime import datetime
 from bluekai.job import *
 
 class run_test(TestCase):
@@ -40,3 +42,53 @@ class run_test(TestCase):
         self.logger_mock.exception.assert_called_once_with(exception)
         self.logger_mock.error.assert_called_once_with(error)
         self.logger_mock.info.assert_has_calls([ call("start"), call("end (1 seconds)") ])
+
+class do_job_test(TestCase):
+
+    def setUp(self):
+        self.config = {
+            'JANRAIN_URI': 'test_janrain_uri',
+            'JANRAIN_CLIENT_ID': 'test_janrain_client_id',
+            'JANRAIN_CLIENT_SECRET': 'test_janrain_client_secret',
+            'JANRAIN_SCHEMA_NAME': 'test_janrain_schema_name',
+            'JANRAIN_BATCH_SIZE': 2,
+        }
+        self.jobModel_mock = Mock()
+        self.writter_mock = MagicMock()
+        self.logger_mock = Mock()
+        self.converter_mock = Mock()
+        self.job_mock = Mock()
+        self.records_iterator = [
+            { "lastUpdated": "2016-01-01 01:01:01.000000" },
+            { "lastUpdated": "2016-01-02 01:01:01.000000" },
+            { "lastUpdated": "2016-02-01 01:01:01.000000 +0000" },
+            { "lastUpdated": "2016-02-04 01:01:01.000000" },
+        ]
+        self.capture_schema_mock = Mock()
+        self.capture_schema_mock.records.iterator.return_value = self.records_iterator
+        self.capture_app_mock = Mock()
+        self.capture_app_mock.get_schema.return_value = self.capture_schema_mock
+        self.datalib_mock = Mock()
+        self.datalib_mock.get_app.return_value = self.capture_app_mock
+        self.jobModel_mock.get.return_value = self.job_mock
+        self.job_mock.lastUpdated = datetime.utcfromtimestamp(0)
+
+    def test_run(self):
+
+        do_job(self.jobModel_mock, self.writter_mock, self.config,
+            self.logger_mock, self.datalib_mock, self.converter_mock)
+
+        self.jobModel_mock.get.assert_called_once_with(self.config)
+        self.writter_mock.__enter__.assert_called_once_with()
+        self.writter_mock.__exit__.assert_called_once_with(None, None, None)
+        self.converter_mock.assert_has_calls([
+            call(self.records_iterator[0]),
+            call(self.records_iterator[1]),
+            call(self.records_iterator[2]),
+            call(self.records_iterator[3]),
+        ])
+        self.logger_mock.debug.assert_has_calls([
+            call("wrote record 2"),
+            call("wrote record 4"),
+        ])
+        self.logger_mock.info.assert_called_once_with("exported 4 records")
