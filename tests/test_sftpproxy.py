@@ -3,8 +3,6 @@ from unittest import TestCase
 from mock import Mock
 from bluekai.sftpproxy import *
 
-frozen_datetime="2016-01-01"
-
 class SftpProxy_test(TestCase):
 
     def setUp(self):
