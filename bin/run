@@ -3,6 +3,9 @@
 # refer to application documentation
 export DEBUG=true
 export APP_LOG_FILE=application.log
+export AWS_DEFAULT_REGION=
+export AWS_DYNAMODB_URL=
+export AWS_DYNAMODB_TABLE=
 export AWS_QUEUE_TIMEOUT=
 export JANRAIN_URI=
 export JANRAIN_CLIENT_ID=
@@ -13,5 +16,6 @@ export REMOTE_PORT=
 export REMOTE_USERNAME=
 export REMOTE_PASSWORD=
 export REMOTE_RSA_KEY=
+export REMOTE_FILE=
 
 python application.py
