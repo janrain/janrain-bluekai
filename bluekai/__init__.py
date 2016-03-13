@@ -20,11 +20,7 @@ def create_app(config, model):
   # add the thread executor to the app
   app.threadexecutor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
 
-  @app.after_request
-  def add_headers(response):
-      """additional headers for each response"""
-      response.headers['X-App-Version'] = __version__
-      return response
+  app.after_request(_add_headers)
 
   app.model = model
 
@@ -37,6 +33,11 @@ def create_app(config, model):
       )
 
   return app
+
+def _add_headers(response):
+    """additional headers for each response"""
+    response.headers['X-App-Version'] = __version__
+    return response
 
 def logging_init(app):
   # setup logging

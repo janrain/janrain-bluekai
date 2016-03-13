@@ -2,9 +2,12 @@
 from unittest import TestCase
 from mock import patch
 from mock import Mock
+from mock import MagicMock
 import logging
 from bluekai import create_app
 from bluekai import logging_init
+from bluekai import _add_headers
+from bluekai._version import __version__
 
 class create_app_test(TestCase):
 
@@ -64,3 +67,10 @@ class logging_init_test(TestCase):
         handler = logging_init(self.app)
         self.assertEqual(handler.level, logging.DEBUG)
 
+class add_headers_test(TestCase):
+
+    def test_run(self):
+        response_mock = MagicMock()
+        returned_response = _add_headers(response_mock)
+        response_mock.headers.__setitem__.assert_called_once_with('X-App-Version', __version__)
+        self.assertIs(response_mock, returned_response)
