@@ -9,9 +9,9 @@ def fromRecord(record):
 
     uuid = record.get('uuid')
 
-    items = record.iteritems()
-    items = filter(lambda (key, value): key != "uuid", items)
-    items = map(lambda (key, value): "{}={}".format(key, value), items)
+    items = record.items()
+    items = filter(lambda pair: pair[0] != "uuid", items)
+    items = map(lambda pair: "{}={}".format(pair[0], pair[1]), items)
     items = str.join('|', items)
 
     row = "{}\t{}\n".format(uuid, items)

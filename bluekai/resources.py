@@ -5,7 +5,7 @@ import paramiko
 import janrain_datalib
 import janrain_datalib.exceptions
 import janrain_datalib.utils
-import bluekai_tsv
+from . import bluekai_tsv
 from .job import run as jobRunner
 from .models import JobModel
 from .sftpproxy import SftpProxy
