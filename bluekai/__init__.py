@@ -44,7 +44,7 @@ def logging_init(app):
   handler = logging.handlers.RotatingFileHandler(
       app.config['APP_LOG_FILE'],
       backupCount=app.config['APP_LOG_NUM_BACKUPS'],
-      maxBytes=int(app.config['APP_LOG_FILESIZE']))
+      maxBytes=app.config['APP_LOG_FILESIZE'])
 
   if app.debug:
       handler.setLevel(logging.DEBUG)
