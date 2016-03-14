@@ -32,7 +32,7 @@ def _export(config, JobModel, SftpProxy, threadexecutor, logger):
 
     if job.start():
         threadexecutor.submit(
-            jobRunner, JobModel, writter, config, logger,
+            jobRunner, job, writter, config, logger,
             janrain_datalib, bluekai_tsv.fromRecord)
     else:
         logger.warning("export job already running")

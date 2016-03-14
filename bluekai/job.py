@@ -2,16 +2,15 @@ from .date_utils import fromRecordDateTime
 from .date_utils import toRecordDateTime
 from .records import recordsNewerThan
 
-def run(JobModel, writter, config, logger, datalib, converter):
+def run(job, writter, config, logger, datalib, converter):
 
     logger.info("start")
 
-    job = JobModel.get(config)
     err = None
 
     try:
 
-        do_job(JobModel, writter, config, logger, datalib, converter)
+        do_job(job, writter, config, logger, datalib, converter)
 
     except Exception as ex:
 
@@ -26,9 +25,8 @@ def run(JobModel, writter, config, logger, datalib, converter):
         job.stop()
         logger.info("end ({} seconds)".format(job.ended - job.started))
 
-def do_job(JobModel, writter, config, logger, datalib, converter):
+def do_job(job, writter, config, logger, datalib, converter):
 
-    job = JobModel.get(config)
     last_updated = job.lastUpdated
 
     capture_app = datalib.get_app(
@@ -56,5 +54,3 @@ def do_job(JobModel, writter, config, logger, datalib, converter):
                 logger.debug("wrote record {}".format(record_num))
 
         logger.info("exported {} records".format(record_num))
-
-    return job
