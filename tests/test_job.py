@@ -5,6 +5,7 @@ from mock import Mock
 from mock import MagicMock
 from mock import call
 from datetime import datetime
+from bluekai.date_utils import toModelDateTime
 from bluekai.job import *
 
 class run_test(TestCase):
@@ -24,8 +25,7 @@ class run_test(TestCase):
 
     @patch('bluekai.job.do_job')
     def test_with_out_errors(self, do_job_mock):
-        run(self.jobModel_mock, self.writter_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
-        self.jobModel_mock.get.assert_called_once_with(self.config)
+        run(self.job_mock, self.writter_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
         self.job_mock.stop.assert_called_once_with()
         self.logger_mock.exception.assert_not_called()
         self.logger_mock.error.assert_not_called()
@@ -36,8 +36,7 @@ class run_test(TestCase):
         error = "test_error"
         exception = Exception(error)
         do_job_mock.side_effect = exception
-        run(self.jobModel_mock, self.writter_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
-        self.jobModel_mock.get.assert_called_once_with(self.config)
+        run(self.job_mock, self.writter_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
         self.job_mock.stop.assert_called_once_with()
         self.logger_mock.exception.assert_called_once_with(exception)
         self.logger_mock.error.assert_called_once_with(error)
@@ -57,7 +56,7 @@ class do_job_test(TestCase):
         self.writter_mock = MagicMock()
         self.logger_mock = Mock()
         self.converter_mock = Mock()
-        self.job_mock = Mock()
+        self.job_mock = MagicMock()
         self.records_iterator = [
             { "lastUpdated": "2016-01-01 01:01:01.000000" },
             { "lastUpdated": "2016-01-02 01:01:01.000000" },
@@ -70,15 +69,13 @@ class do_job_test(TestCase):
         self.capture_app_mock.get_schema.return_value = self.capture_schema_mock
         self.datalib_mock = Mock()
         self.datalib_mock.get_app.return_value = self.capture_app_mock
-        self.jobModel_mock.get.return_value = self.job_mock
         self.job_mock.lastUpdated = datetime.utcfromtimestamp(0)
 
     def test_run(self):
 
-        do_job(self.jobModel_mock, self.writter_mock, self.config,
+        do_job(self.job_mock, self.writter_mock, self.config,
             self.logger_mock, self.datalib_mock, self.converter_mock)
 
-        self.jobModel_mock.get.assert_called_once_with(self.config)
         self.writter_mock.__enter__.assert_called_once_with()
         self.writter_mock.__exit__.assert_called_once_with(None, None, None)
         self.converter_mock.assert_has_calls([
