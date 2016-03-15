@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
 
+# Causes script to stop on the first script that errors
+set -e
+
 coverage run -m unittest discover -v
 coverage report

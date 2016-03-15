@@ -1,12 +1,14 @@
 from unittest import TestCase
+from collections import OrderedDict
 from bluekai.bluekai_tsv import *
 
 class bluekai_test(TestCase):
 
   def test_fromRecord(self):
     record = { "uuid": "a-b-c", "key1": "value1", "key2":"value2" }
+    record = OrderedDict(sorted(record.items(), key=lambda t: t[0]))
     actual = fromRecord(record)
-    expected = "a-b-c\tkey2=value2|key1=value1\n"
+    expected = "a-b-c\tkey1=value1|key2=value2\n"
     self.assertEqual(actual, expected)
 
   def test_fromRecordsIterator(self):
@@ -16,10 +18,10 @@ class bluekai_test(TestCase):
     records_iterator = fromRecordsIterator(records)
     expected1 = "a-b-c\tkey1=value1\n"
     expected2 = "x-y-z\tkey2=value2\n"
-    self.assertEqual(records_iterator.next(), expected1)
-    self.assertEqual(records_iterator.next(), expected2)
+    self.assertEqual(records_iterator.__next__(), expected1)
+    self.assertEqual(records_iterator.__next__(), expected2)
     with self.assertRaises(StopIteration):
-        records_iterator.next()
+        records_iterator.__next__()
 
   def test_fromRecords(self):
     record1 = { "uuid": "a-b-c", "key1": "value1" }

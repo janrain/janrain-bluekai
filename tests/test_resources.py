@@ -64,7 +64,7 @@ class export_test(TestCase):
         self.sftp_mock.file.assert_called_once_with(self.config['REMOTE_FILE'], mode='w', bufsize=self.config['SFTP_BUFFER_SIZE'])
         self.job_mock.start.assert_called_once_with()
         self.threadexecutor_mock.submit.assert_called_once_with(
-            jobRunner, self.jobModel_mock, self.writter_mock, self.config,
+            jobRunner, self.job_mock, self.writter_mock, self.config,
             self.logging_mock, janrain_datalib, bluekai_tsv.fromRecord)
         self.logging_mock.warning.assert_not_called()
 

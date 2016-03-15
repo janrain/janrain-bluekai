@@ -44,14 +44,11 @@ class logging_init_test(TestCase):
 
     def setUp(self):
 
-        self.config = {
-            'DEBUG': "",
-        }
         self.app = Mock()
         self.app.config = {
-            'APP_LOG_FILE': 'test_app_log_file',
+            'APP_LOG_FILE': 'test_app_log_file.log',
             'APP_LOG_NUM_BACKUPS': 'test_app_log_backups',
-            'APP_LOG_FILESIZE': '1000',
+            'APP_LOG_FILESIZE': 1000,
             'LOGGER_NAME': 'test_logger_name',
         }
 
