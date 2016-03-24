@@ -22,9 +22,6 @@ _ENV_VARS = {
     'REMOTE_PASSWORD': '',
     'REMOTE_RSA_KEY': '',
     'REMOTE_FILE': 'janrain-bluekai.tsv',
-    'UPDATE_PRIORITY_HOURS_LIMIT': 27,
-    'SFTP_BUFFER_SIZE': 32768,
-
 }
 
 def get_config():
