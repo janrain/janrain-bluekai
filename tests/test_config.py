@@ -2,6 +2,7 @@
 from unittest import TestCase
 from mock import patch
 from bluekai.config import *
+from bluekai.config import _ENV_VARS
 
 class getConfigTests(TestCase):
 
@@ -28,3 +29,31 @@ class getConfigTests(TestCase):
         getenv_mock.return_value = 'a'
         config = get_config()
         self.assertEqual(config['REMOTE_PORT'], 22)
+
+    @patch('os.getenv')
+    def test_valid_list(self, getenv_mock):
+        _ENV_VARS['LIST'] = [];
+        getenv_mock.return_value = '["a"]'
+        config = get_config()
+        self.assertEqual(config['LIST'], ["a"])
+
+    @patch('os.getenv')
+    def test_invalid_list(self, getenv_mock):
+        _ENV_VARS['LIST'] = [];
+        getenv_mock.return_value = 'a'
+        config = get_config()
+        self.assertEqual(config['LIST'], [])
+
+    @patch('os.getenv')
+    def test_valid_dict(self, getenv_mock):
+        _ENV_VARS['DICT'] = {};
+        getenv_mock.return_value = '{"a":1}'
+        config = get_config()
+        self.assertEqual(config['DICT'], {"a":1})
+
+    @patch('os.getenv')
+    def test_invalid_dict(self, getenv_mock):
+        _ENV_VARS['DICT'] = {};
+        getenv_mock.return_value = 'a'
+        config = get_config()
+        self.assertEqual(config['DICT'], {})

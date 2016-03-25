@@ -28,7 +28,7 @@ Should be the load balancer for the region.
 at a time.
 (default: `1000`)
 
-- `JANRAIN_ATTRIBUTE_KEYS`: Comma seperated list of schema attributes to export.
+- `JANRAIN_ATTRIBUTE_KEYS`: JSON list of schema attributes to export or a JSON list of schema attribute mappings.
 
 - `APP_LOG_FILE`: Full path to the file where the app will write the log.
 (should only be used during local development, leave blank when deployed

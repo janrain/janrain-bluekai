@@ -1,5 +1,6 @@
 """Application configuration"""
 import os
+import json
 
 # environment variables and their defaults if not defined
 _ENV_VARS = {
@@ -15,7 +16,7 @@ _ENV_VARS = {
     'JANRAIN_CLIENT_SECRET': '',
     'JANRAIN_SCHEMA_NAME': 'user',
     'JANRAIN_BATCH_SIZE': 1000,
-    'JANRAIN_ATTRIBUTE_KEYS': "",
+    'JANRAIN_ATTRIBUTE_KEYS': [],
     'REMOTE_HOST': '',
     'REMOTE_PORT': 22,
     'REMOTE_USERNAME': '',
@@ -39,6 +40,11 @@ def get_config():
         elif isinstance(_ENV_VARS[key], int):
             try:
                 value = int(value)
+            except ValueError:
+                value = default_value
+        elif isinstance(_ENV_VARS[key], (dict, list)):
+            try:
+                value = json.loads(value)
             except ValueError:
                 value = default_value
         config[key] = value

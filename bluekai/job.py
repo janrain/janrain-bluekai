@@ -36,8 +36,6 @@ def do_job(job, writter, config, logger, datalib, converter):
 
     records_iterator = recordsNewerThan(capture_app, config, last_updated)
 
-    attribute_keys = config['JANRAIN_ATTRIBUTE_KEYS'].split(',')
-
     with writter as fp:
 
         record_num = 0
@@ -49,7 +47,7 @@ def do_job(job, writter, config, logger, datalib, converter):
                 job.lastupdated = last_updated
 
 
-            row = converter(record, attribute_keys)
+            row = converter(record, config['JANRAIN_ATTRIBUTE_KEYS'])
 
             fp.write(row)
 
