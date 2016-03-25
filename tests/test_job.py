@@ -80,10 +80,10 @@ class do_job_test(TestCase):
         self.writter_mock.__enter__.assert_called_once_with()
         self.writter_mock.__exit__.assert_called_once_with(None, None, None)
         self.converter_mock.assert_has_calls([
-            call(self.records_iterator[0], ['']),
-            call(self.records_iterator[1], ['']),
-            call(self.records_iterator[2], ['']),
-            call(self.records_iterator[3], ['']),
+            call(self.records_iterator[0], ''),
+            call(self.records_iterator[1], ''),
+            call(self.records_iterator[2], ''),
+            call(self.records_iterator[3], ''),
         ])
         self.logger_mock.debug.assert_has_calls([
             call("wrote record 2"),
