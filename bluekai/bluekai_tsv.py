@@ -5,7 +5,16 @@ def fromRecordsIterator(records, keys=[]):
     for record in records:
         yield fromRecord(record, keys)
 
-def fromRecord(record, keys=[]):
+def fromRecord(record, keys=None):
+
+    def getKey(key, keys):
+        try:
+            return keys[key]
+        except TypeError:
+            return key
+
+    if not keys:
+        keys = []
 
     uuid = record.get('uuid')
 
@@ -13,7 +22,7 @@ def fromRecord(record, keys=[]):
 
     items = sub_record.items()
     items = filter(lambda pair: pair[0] != "uuid", items)
-    items = map(lambda pair: "{}={}".format(pair[0], pair[1]), items)
+    items = map(lambda pair: "{}={}".format(getKey(pair[0], keys), pair[1]), items)
     items = str.join('|', items)
 
     row = "{}\t{}\n".format(uuid, items)

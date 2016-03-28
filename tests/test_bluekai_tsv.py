@@ -51,6 +51,14 @@ class bluekai_test(TestCase):
     expected = "a-b-c\tkey=value1\nx-y-z\tkey=value2\n"
     self.assertEqual(actual, expected)
 
+  def test_fromRecords_key_map(self):
+    record1 = { "uuid": "a-b-c", "key": "value1" }
+    record2 = { "uuid": "x-y-z", "key": "value2" }
+    records = [record1, record2]
+    actual = fromRecords(records, {"key":"KEY"})
+    expected = "a-b-c\tKEY=value1\nx-y-z\tKEY=value2\n"
+    self.assertEqual(actual, expected)
+
   def test_fromRecords_default_keys(self):
     record1 = { "uuid": "a-b-c", "key": "value1" }
     record2 = { "uuid": "x-y-z", "key": "value2" }
