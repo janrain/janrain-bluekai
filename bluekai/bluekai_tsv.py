@@ -5,13 +5,16 @@ def fromRecordsIterator(records, keys=[]):
     for record in records:
         yield fromRecord(record, keys)
 
-def fromRecord(record, keys=[]):
+def fromRecord(record, keys=None):
 
     def getKey(key, keys):
         try:
             return keys[key]
         except TypeError:
             return key
+
+    if not keys:
+        keys = []
 
     uuid = record.get('uuid')
 
