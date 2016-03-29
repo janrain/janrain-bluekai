@@ -41,17 +41,16 @@ def do_job(job, writter, config, logger, datalib, converter):
         record_num = 0
         for record_num, record in enumerate(records_iterator, start=1):
 
-            record_last_updated = fromRecordDateTime(record['lastUpdated'])
-            if not last_updated or record_last_updated > last_updated:
-                last_updated = fromRecordDateTime(record['lastUpdated'])
-                job.lastupdated = last_updated
-
-
             row = converter(record, config['JANRAIN_ATTRIBUTE_KEYS'])
 
             fp.write(row)
 
             if record_num % config['JANRAIN_BATCH_SIZE'] == 0:
                 logger.debug("wrote record {}".format(record_num))
+
+            record_last_updated = fromRecordDateTime(record['lastUpdated'])
+            if not last_updated or record_last_updated > last_updated:
+                last_updated = fromRecordDateTime(record['lastUpdated'])
+                job.lastupdated = last_updated
 
         logger.info("exported {} records".format(record_num))
