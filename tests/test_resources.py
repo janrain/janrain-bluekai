@@ -19,7 +19,6 @@ class export_test(TestCase):
         self.app = flask.Flask(__name__)
         self.config = {
             'LOGGER_NAME': "test_logger_name",
-            'REMOTE_FILE': "test_remote_file",
             'SFTP_BUFFER_SIZE': 1000,
         }
         self.job_mock = Mock()
@@ -61,7 +60,7 @@ class export_test(TestCase):
 
         self.jobModel_mock.get.assert_called_once_with(self.config)
         self.sftpProxy_mock.assert_called_once_with(paramiko, self.config, self.logging_mock)
-        self.sftp_mock.file.assert_called_once_with(self.config['REMOTE_FILE'], mode='w', bufsize=self.config['SFTP_BUFFER_SIZE'])
+        self.sftp_mock.file.assert_called_once_with(None, mode='w', bufsize=self.config['SFTP_BUFFER_SIZE'])
         self.job_mock.start.assert_called_once_with()
         self.threadexecutor_mock.submit.assert_called_once_with(
             jobRunner, self.job_mock, self.writter_mock, self.config,
@@ -79,7 +78,7 @@ class export_test(TestCase):
 
         self.jobModel_mock.get.assert_called_once_with(self.config)
         self.sftpProxy_mock.assert_called_once_with(paramiko, self.config, self.logging_mock)
-        self.sftp_mock.file.assert_called_once_with(self.config['REMOTE_FILE'], mode='w', bufsize=self.config['SFTP_BUFFER_SIZE'])
+        self.sftp_mock.file.assert_called_once_with(None, mode='w', bufsize=self.config['SFTP_BUFFER_SIZE'])
         self.job_mock.start.assert_called_once_with()
         self.threadexecutor_mock.submit.assert_not_called()
         self.logging_mock.warning.assert_called_once_with("export job already running")
