@@ -1,6 +1,7 @@
 """Application configuration"""
 import os
 import json
+from datetime import datetime
 
 # environment variables and their defaults if not defined
 _ENV_VARS = {
@@ -22,7 +23,10 @@ _ENV_VARS = {
     'REMOTE_USERNAME': '',
     'REMOTE_PASSWORD': '',
     'REMOTE_RSA_KEY': '',
-    'REMOTE_FILE': 'janrain-bluekai.tsv',
+    'BLUEKAI_PARTNERNAME': '',
+    'BLUEKAI_CLIENTNAME': '',
+    'BLUEKAI_SITEID': '',
+    'SFTP_BUFFER_SIZE': 32768,
 }
 
 def get_config():
@@ -49,3 +53,17 @@ def get_config():
                 value = default_value
         config[key] = value
     return config
+
+def remote_filename(config):
+
+    partnerName = config.get('BLUEKAI_PARTNERNAME')
+    clientName = config.get('BLUEKAI_CLIENTNAME')
+    siteId = config.get('BLUEKAI_SITEID')
+
+    date = datetime.now().strftime("%Y%m%d")
+
+    if partnerName and clientName and siteId:
+        return "{}_{}_{}_{}".format(partnerName, clientName, siteId, date)
+
+    elif partnerName and siteId:
+        return "{}_{}_{}".format(partnerName, siteId, date)
