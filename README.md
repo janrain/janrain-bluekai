@@ -61,6 +61,14 @@ to elastic beanstalk)
 
 - `REMOTE_FILE`: The name of the file to save on the BlueKai SFTP Server.
 
+- `BLUEKAI_PARTNERNAME`: BlueKai Partner Name.
+
+- `BLUEKAI_CLIENTNAME`: BlueKai Client Name (Optional).
+
+- `BLUEKAI_SITEID`: BlueKai SiteID.
+
+- `SFTP_BUFFER_SIZE`: The size of the SFTP buffer.
+(default: `32768`)
 
 ## Developement
 

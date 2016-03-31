@@ -3,6 +3,7 @@ from unittest import TestCase
 from mock import patch
 from bluekai.config import *
 from bluekai.config import _ENV_VARS
+from freezegun import freeze_time
 
 class getConfigTests(TestCase):
 
@@ -57,3 +58,28 @@ class getConfigTests(TestCase):
         getenv_mock.return_value = 'a'
         config = get_config()
         self.assertEqual(config['DICT'], {})
+
+class remoteFilenameTests(TestCase):
+
+    frozen_datetime="2016-01-02"
+
+    @freeze_time(frozen_datetime)
+    def test_without_clientName(self):
+        config = {
+            'BLUEKAI_PARTNERNAME': "partnername",
+            'BLUEKAI_CLIENTNAME': 'clientname',
+            'BLUEKAI_SITEID': 'siteid',
+        }
+        actual = remote_filename(config)
+        expected = "partnername_clientname_siteid_20160102"
+        self.assertEqual(actual, expected)
+
+    @freeze_time(frozen_datetime)
+    def test_with_clientName(self):
+        config = {
+            'BLUEKAI_PARTNERNAME': "partnername",
+            'BLUEKAI_SITEID': 'siteid',
+        }
+        actual = remote_filename(config)
+        expected = "partnername_siteid_20160102"
+        self.assertEqual(actual, expected)

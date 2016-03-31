@@ -6,6 +6,7 @@ import janrain_datalib
 import janrain_datalib.exceptions
 import janrain_datalib.utils
 from . import bluekai_tsv
+from .config import remote_filename
 from .job import run as jobRunner
 from .models import JobModel
 from .sftpproxy import SftpProxy
@@ -28,7 +29,7 @@ def _export(config, JobModel, SftpProxy, threadexecutor, logger):
     job = JobModel.get(config)
 
     sftp = SftpProxy(paramiko, config, logger)
-    writter = sftp.file(config['REMOTE_FILE'], mode='w', bufsize=config['SFTP_BUFFER_SIZE'])
+    writter = sftp.file(remote_filename(config), mode='w', bufsize=config['SFTP_BUFFER_SIZE'])
 
     if job.start():
         threadexecutor.submit(
