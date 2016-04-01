@@ -16,6 +16,8 @@ def fromRecord(record, keys=None):
     def getValue(value):
         if isinstance(value, (dict, list)):
             raise TypeError("Plural, Object and JSON value types are not supported")
+        elif value is None:
+            return ""
         else:
             return value
 

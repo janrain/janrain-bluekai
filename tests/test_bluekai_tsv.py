@@ -29,6 +29,11 @@ class bluekai_test(TestCase):
     with self.assertRaises(TypeError):
         fromRecord(record, ["dict"])
 
+  def test_fromRecord_none_types(self):
+    record = { "uuid": "a-b-c", "none": None }
+    actual = fromRecord(record, ["none"])
+    expected = "a-b-c\tnone=\n"
+
   def test_fromRecordsIterator(self):
     record1 = { "uuid": "a-b-c", "key": "value1" }
     record2 = { "uuid": "x-y-z", "key": "value2" }
