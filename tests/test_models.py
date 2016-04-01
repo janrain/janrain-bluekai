@@ -151,7 +151,8 @@ class models_test(TestCase):
         self.assertEqual(result, "test error message")
 
     @freeze_time(frozen_datetime)
-    def test_stop(self):
+    @patch.object(JobModel, 'save')
+    def test_stop(self, save_mock):
 
         job = JobModel()
         job.stop()
