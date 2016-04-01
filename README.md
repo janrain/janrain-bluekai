@@ -16,8 +16,8 @@ The application reads its configuration from these environment variables:
 to the log.
 
 - `JANRAIN_URI`: Hostname to use when making API calls to Capture.
-Should be the load balancer for the region.
-(default: `testing.janraincapture.com`)
+
+- `JANRAIN_CLIENT_ID`: Janrain client Id.
 
 - `JANRAIN_CLIENT_SECRET`: Secret for the client.
 
@@ -28,7 +28,7 @@ Should be the load balancer for the region.
 at a time.
 (default: `1000`)
 
-- `JANRAIN_ATTRIBUTE_KEYS`: JSON list of schema attributes to export or a JSON list of schema attribute mappings.
+- `JANRAIN_ATTRIBUTE_KEYS`: JSON list of schema attributes to export or a JSON dictionary of schema attribute mappings.
 
 - `APP_LOG_FILE`: Full path to the file where the app will write the log.
 (should only be used during local development, leave blank when deployed
@@ -58,8 +58,6 @@ to elastic beanstalk)
 - `REMOTE_PASSWORD`: Password of the BlueKai SFTP Server.
 
 - `REMOTE_RSA_KEY`: RSA Private Key file of the BlueKai SFTP Server (Optional is using username and password)
-
-- `REMOTE_FILE`: The name of the file to save on the BlueKai SFTP Server.
 
 - `BLUEKAI_PARTNERNAME`: BlueKai Partner Name.
 
