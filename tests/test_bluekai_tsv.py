@@ -19,6 +19,16 @@ class bluekai_test(TestCase):
     expected = "a-b-c\t\n"
     self.assertEqual(actual, expected)
 
+  def test_fromRecord_list_types(self):
+    record = { "uuid": "a-b-c", "list": ["value1"] }
+    with self.assertRaises(TypeError):
+        fromRecord(record, ["list"])
+
+  def test_fromRecord_dict_types(self):
+    record = { "uuid": "a-b-c", "dict": {"key":"value"} }
+    with self.assertRaises(TypeError):
+        fromRecord(record, ["dict"])
+
   def test_fromRecordsIterator(self):
     record1 = { "uuid": "a-b-c", "key": "value1" }
     record2 = { "uuid": "x-y-z", "key": "value2" }

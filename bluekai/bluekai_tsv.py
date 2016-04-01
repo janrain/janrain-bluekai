@@ -13,6 +13,12 @@ def fromRecord(record, keys=None):
         except TypeError:
             return key
 
+    def getValue(value):
+        if isinstance(value, (dict, list)):
+            raise TypeError("Plural, Object and JSON value types are not supported")
+        else:
+            return value
+
     if not keys:
         keys = []
 
@@ -22,7 +28,7 @@ def fromRecord(record, keys=None):
 
     items = sub_record.items()
     items = filter(lambda pair: pair[0] != "uuid", items)
-    items = map(lambda pair: "{}={}".format(getKey(pair[0], keys), pair[1]), items)
+    items = map(lambda pair: "{}={}".format(getKey(pair[0], keys), getValue(pair[1])), items)
     items = str.join('|', items)
 
     row = "{}\t{}\n".format(uuid, items)
