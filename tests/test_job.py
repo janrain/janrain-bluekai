@@ -90,3 +90,22 @@ class do_job_test(TestCase):
             call("wrote record 4"),
         ])
         self.logger_mock.info.assert_called_once_with("exported 4 records")
+
+    def test_error(self):
+
+        self.records_iterator = [
+            { "lastUpdated": "2016-01-01 01:01:01.000000", "list": [] }
+        ]
+        self.capture_schema_mock.records.iterator.return_value = self.records_iterator
+        self.converter_mock.side_effect = TypeError
+
+        with self.assertRaises(SystemExit):
+            do_job(self.job_mock, self.writter_mock, self.config,
+                self.logger_mock, self.datalib_mock, self.converter_mock)
+
+        self.writter_mock.__enter__.assert_called_once_with()
+        self.converter_mock.assert_has_calls([
+            call(self.records_iterator[0], ''),
+        ])
+        self.logger_mock.debug.assert_has_calls([])
+        self.logger_mock.error.assert_called_once_with("")
