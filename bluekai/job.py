@@ -41,7 +41,12 @@ def do_job(job, writter, config, logger, datalib, converter):
         record_num = 0
         for record_num, record in enumerate(records_iterator, start=1):
 
-            row = converter(record, config['JANRAIN_ATTRIBUTE_KEYS'])
+            try:
+                row = converter(record, config['JANRAIN_ATTRIBUTE_KEYS'])
+            except TypeError as exception:
+                message = str(exception)
+                logger.error(message)
+                raise SystemExit(message)
 
             fp.write(row)
 
