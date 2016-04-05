@@ -1,19 +1,23 @@
-def fromRecords(records, keys=[]):
-    return str.join('', fromRecordsIterator(records, keys))
+import re
+from pse.std_json import walk
+from itertools import groupby
 
-def fromRecordsIterator(records, keys=[]):
+def fromRecords(records, paths=[]):
+    return str.join('', fromRecordsIterator(records, paths))
+
+def fromRecordsIterator(records, paths=[]):
     for record in records:
-        yield fromRecord(record, keys)
+        yield fromRecord(record, paths)
 
-def fromRecord(record, keys=None):
+def fromRecord(record, paths=None):
 
-    def getKey(key, keys):
+    def mapPath(path):
         try:
-            return keys[key]
+            return paths[path]
         except TypeError:
-            return key
+            return path
 
-    def getValue(value):
+    def mapValue(value):
         if isinstance(value, (dict, list)):
             raise TypeError("Plural, Object and JSON value types are not supported")
         elif value is None:
@@ -21,18 +25,42 @@ def fromRecord(record, keys=None):
         else:
             return value
 
-    if not keys:
-        keys = []
+    # Compile (path, regex) for each path
+    regex_mappings = [
+        (path, re.compile(path.replace('.', r'(?:\.|\.\d+\.)')))
+        for path in (paths or [])
+    ]
 
-    uuid = record.get('uuid')
+    walked_record = walk(record)
 
-    sub_record = { key: record[key] for key in keys if key in record }
+    # (path, walked_path, value) of each walked_record that matches a
+    # regex and add path from regex_mapping.
+    walked_record = (
+        (path, walked_path, value)
+        for (walked_path, value) in walked_record
+        for (path, regex) in regex_mappings
+        if regex.fullmatch(walked_path)
+    )
 
-    items = sub_record.items()
-    items = filter(lambda pair: pair[0] != "uuid", items)
-    items = map(lambda pair: "{}={}".format(getKey(pair[0], keys), getValue(pair[1])), items)
-    items = str.join('|', items)
+    # Group by path
+    groups = groupby(walked_record, key=lambda each: each[0])
 
-    row = "{}\t{}\n".format(uuid, items)
+    # Join groups values with ','.
+    attributes = (
+        (path, str.join(',', [ value for (_, _, value) in group if value is not None ]))
+        for (path, group) in groups
+    )
+
+    # Join attributes keys and values with "=".
+    attributes = (
+       "{}={}".format(mapPath(path), mapValue(value))
+       for (path, value) in attributes
+    )
+
+    # Join attributes with '|'.
+    attributes = str.join('|', attributes)
+
+    # Create row by joining uuid and attributes.
+    row = "{}\t{}\n".format(record['uuid'], attributes)
 
     return row
