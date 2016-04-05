@@ -21,6 +21,7 @@ class models_test(TestCase):
         datetime_now = datetime.utcfromtimestamp(0)
         config = {
             'JANRAIN_SCHEMA_NAME': "schemaName",
+            'JANRAIN_ATTRIBUTE_KEYS': ["a"],
             'JANRAIN_BATCH_SIZE': 1000,
         }
 
@@ -32,7 +33,8 @@ class models_test(TestCase):
 
         capture_schema_mock.records.iterator.assert_called_once_with(
             filtering="lastUpdated > '{}'".format(datetime_now.strftime("%Y-%m-%d %H:%M:%S.%f")),
-            batch_size=config['JANRAIN_BATCH_SIZE']
+            batch_size=config['JANRAIN_BATCH_SIZE'],
+            attributes=['a', 'lastUpdated', 'uuid']
         )
 
     def test_recordsNewerThan_with_none_date(self):
@@ -47,6 +49,7 @@ class models_test(TestCase):
         datetime_now = datetime.utcfromtimestamp(0)
         config = {
             'JANRAIN_SCHEMA_NAME': "schemaName",
+            'JANRAIN_ATTRIBUTE_KEYS': [],
             'JANRAIN_BATCH_SIZE': 1000,
         }
 
@@ -58,7 +61,8 @@ class models_test(TestCase):
 
         capture_schema_mock.records.iterator.assert_called_once_with(
             filtering="lastUpdated > '{}'".format(datetime_now.strftime("%Y-%m-%d %H:%M:%S.%f")),
-            batch_size=config['JANRAIN_BATCH_SIZE']
+            batch_size=config['JANRAIN_BATCH_SIZE'],
+            attributes=['lastUpdated', 'uuid']
         )
 
 
