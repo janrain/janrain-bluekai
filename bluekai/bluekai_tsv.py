@@ -1,5 +1,4 @@
 import re
-from pse.std_json import walk
 from itertools import groupby
 
 def fromRecords(records, paths=[]):
@@ -61,3 +60,32 @@ def fromRecord(record, paths=None):
         raise TypeError("Plural, Object and JSON value types are not supported")
 
     return row
+
+def walk(obj, path=''):
+    """
+    Iterate over a JSON-compatible Python object.  Behavior with incompatible
+    objects is undefined.
+    >>> tuple(walk([0, 1]))
+    (('', [0, 1]), ('0', 0), ('1', 1))
+    >>> tuple(walk([0, 1], 'foo'))
+    (('foo', [0, 1]), ('foo.0', 0), ('foo.1', 1))
+    >>> tuple(walk({'foo': 'bar', 'baz': [0, 1]}))
+    (('', {'foo': 'bar', 'baz': [0, 1]}), ('baz', [0, 1]), ('baz.0', 0), ('baz.1', 1), ('foo', 'bar'))
+    >>> tuple(walk("wat"))
+    (('', 'wat'),)
+    """
+    yield path, obj
+    dot = '.' if path != '' else ''
+    for key, value in _json_iter(obj):
+        # these yield chains have got to be inefficient
+        # but fixing that would mean losing recursion and simple iteration
+        for pair in walk(value, path + dot + str(key)):
+            yield pair
+
+
+def _json_iter(obj):
+    if isinstance(obj, dict):
+        return sorted(obj.items())
+    if isinstance(obj, list):
+        return enumerate(obj)
+    return ()
