@@ -34,6 +34,26 @@ class bluekai_test(TestCase):
     actual = fromRecord(record, ["none"])
     expected = "a-b-c\tnone=\n"
 
+  def test_fromRecord_plural_types(self):
+    record = { "uuid": "a-b-c", "plurals": [ { 'plural': "a" }, { 'plural': "b" }]}
+    actual = fromRecord(record, ["plurals.plural"])
+    expected = "a-b-c\tplurals.plural=a,b\n"
+
+  def test_fromRecord_plural_types_with_mapping(self):
+    record = { "uuid": "a-b-c", "plurals": [ { 'plural': "a" }, { 'plural': "b" }]}
+    actual = fromRecord(record, {"plurals.plural": "plurals"})
+    expected = "a-b-c\tplurals=a,b\n"
+
+  def test_fromRecord_plural_types_with_error(self):
+    record = { "uuid": "a-b-c", "plurals": [ { 'plural': "a" }, { 'plural': "b" }]}
+    with self.assertRaises(TypeError):
+        fromRecord(record, ["plurals"])
+
+  def test_fromRecord_plural_object_with_error(self):
+    record = { "uuid": "a-b-c", "object": { 'plural': "a" } }
+    with self.assertRaises(TypeError):
+        fromRecord(record, ["object"])
+
   def test_fromRecordsIterator(self):
     record1 = { "uuid": "a-b-c", "key": "value1" }
     record2 = { "uuid": "x-y-z", "key": "value2" }
