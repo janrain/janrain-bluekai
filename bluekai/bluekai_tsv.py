@@ -31,6 +31,11 @@ def fromRecord(record, paths=None):
         except TypeError:
             return path
 
+    def mapValue(value):
+        if isinstance(value, (list, dict)):
+            raise TypeError("Plural, Object and JSON value types are not supported")
+        return str(value)
+
     """
     Compile (path, regex) for each path.
     Regular expressions are created by replacing all the '.'s in each path with
@@ -46,98 +51,94 @@ def fromRecord(record, paths=None):
         for path in (paths or [])
     ]
 
-    try:
-
-        """
-        Walk the record.
-        Example output:
-            (
-             ('uuid', 'de305d54-75b4-431b-adb2-eb6b9e546014'),
-             ('gender', 'M'),
-             ('', {'gender': 'M', profiles': [{'profile': {'languagesSpoken': [{'languageSpoken': 'en'}, {'languageSpoken': 'sp'}]}}]}),
-             ('profiles', [{'profile': {'languagesSpoken': [{'languageSpoken': 'en'}, {'languageSpoken': 'sp'}]}}]),
-             ('profiles.0', {'profile': {'languagesSpoken': [{'languageSpoken': 'en'}, {'languageSpoken': 'sp'}]}}),
-             ('profiles.0.profile', {'languagesSpoken': [{'languageSpoken': 'en'}, {'languageSpoken': 'sp'}]}),
-             ('profiles.0.profile.languagesSpoken', [{'languageSpoken': 'en'}, {'languageSpoken': 'sp'}]),
-             ('profiles.0.profile.languagesSpoken.0', {'languageSpoken': 'en'}),
-             ('profiles.0.profile.languagesSpoken.0.languageSpoken', 'en'),
-             ('profiles.0.profile.languagesSpoken.1', {'languageSpoken': 'sp'}),
-             ('profiles.0.profile.languagesSpoken.1.languageSpoken', 'sp')
-            )
-        """
-        walked_record = walk(record)
-
-        """
-        (path, walked_path, value) of each walked_record that matches a regex and add path from regex_mapping.
-        Example output:
-            (
-             ('gender', 'M'),
-             ('profiles.profile.languagesSpoken.languageSpoken', profiles.0.profile.languagesSpoken.0.languageSpoken', 'en'),
-             ('profiles.profile.languagesSpoken.languageSpoken', 'profiles.0.profile.languagesSpoken.1.languageSpoken', 'sp')
-            )
-        """
-        walked_record = (
-            (path, walked_path, value)
-            for (walked_path, value) in walked_record
-            for (path, regex) in regex_mappings
-            if regex.fullmatch(walked_path)
+    """
+    Walk the record.
+    Example output:
+        (
+         ('uuid', 'de305d54-75b4-431b-adb2-eb6b9e546014'),
+         ('gender', 'M'),
+         ('', {'gender': 'M', profiles': [{'profile': {'languagesSpoken': [{'languageSpoken': 'en'}, {'languageSpoken': 'sp'}]}}]}),
+         ('profiles', [{'profile': {'languagesSpoken': [{'languageSpoken': 'en'}, {'languageSpoken': 'sp'}]}}]),
+         ('profiles.0', {'profile': {'languagesSpoken': [{'languageSpoken': 'en'}, {'languageSpoken': 'sp'}]}}),
+         ('profiles.0.profile', {'languagesSpoken': [{'languageSpoken': 'en'}, {'languageSpoken': 'sp'}]}),
+         ('profiles.0.profile.languagesSpoken', [{'languageSpoken': 'en'}, {'languageSpoken': 'sp'}]),
+         ('profiles.0.profile.languagesSpoken.0', {'languageSpoken': 'en'}),
+         ('profiles.0.profile.languagesSpoken.0.languageSpoken', 'en'),
+         ('profiles.0.profile.languagesSpoken.1', {'languageSpoken': 'sp'}),
+         ('profiles.0.profile.languagesSpoken.1.languageSpoken', 'sp')
         )
+    """
+    walked_record = walk(record)
 
-        """
-        Group by path
-        Example output:
-            (
-             ('gender': (('gender', 'M'))),
-             ('profiles.profile.languagesSpoken.languageSpoken', (
-              ('profiles.profile.languagesSpoken.languageSpoken', profiles.0.profile.languagesSpoken.0.languageSpoken', 'en'),
-              ('profiles.profile.languagesSpoken.languageSpoken', 'profiles.0.profile.languagesSpoken.1.languageSpoken', 'sp')
-             )
-            )
-        """
-        groups = groupby(walked_record, key=lambda each: each[0])
-
-        """
-        Join groups values with ','.
-        Example output:
-            (
-             ('gender':'M'),
-             ('profiles.profile.languagesSpoken.languageSpoken', 'en,sp')
-            )
-        """
-        attributes = (
-            (path, str.join(',', [ value for (_, _, value) in group if value is not None ]))
-            for (path, group) in groups
+    """
+    (path, walked_path, value) of each walked_record that matches a regex
+    and add path from regex_mapping.
+    Example output:
+        (
+         ('gender', 'M'),
+         ('profiles.profile.languagesSpoken.languageSpoken', profiles.0.profile.languagesSpoken.0.languageSpoken', 'en'),
+         ('profiles.profile.languagesSpoken.languageSpoken', 'profiles.0.profile.languagesSpoken.1.languageSpoken', 'sp')
         )
+    """
+    walked_record = (
+        (path, walked_path, value)
+        for (walked_path, value) in walked_record
+        for (path, regex) in regex_mappings
+        if regex.fullmatch(walked_path)
+    )
 
-        """
-        Join attributes keys and values with "=".
-        Example output:
-            (
-             'gender=M',
-             'profiles.profile.languagesSpoken.languageSpoken=en,sp'
-            )
-        """
-        attributes = (
-           "{}={}".format(mapPath(path), value)
-           for (path, value) in attributes
+    """
+    Group by path
+    Example output:
+        (
+         ('gender': (('gender', 'M'))),
+         ('profiles.profile.languagesSpoken.languageSpoken', (
+          ('profiles.profile.languagesSpoken.languageSpoken', profiles.0.profile.languagesSpoken.0.languageSpoken', 'en'),
+          ('profiles.profile.languagesSpoken.languageSpoken', 'profiles.0.profile.languagesSpoken.1.languageSpoken', 'sp')
+         )
         )
+    """
+    groups = groupby(walked_record, key=lambda each: each[0])
 
-        """
-        Join attributes with '|'.
-        Example output:
-            'gender=M|profiles.profile.languagesSpoken.languageSpoken=en,sp'
-        """
-        attributes = str.join('|', attributes)
+    """
+    Join groups values with ','.
+    Example output:
+        (
+         ('gender':'M'),
+         ('profiles.profile.languagesSpoken.languageSpoken', 'en,sp')
+        )
+    """
+    attributes = (
+        (path, str.join(',', [ mapValue(value) for (_, _, value) in group if value not in [ None, "" ] ]))
+        for (path, group) in groups
+    )
 
-        """
-        Create row by joining uuid and attributes.
-        Example output:
-            'de305d54-75b4-431b-adb2-eb6b9e546014\tgender=M|profiles.profile.languagesSpoken.languageSpoken=en,sp\n'
-        """
-        row = "{}\t{}\n".format(record['uuid'], attributes)
+    """
+    Join attributes keys and values with "=".
+    Example output:
+        (
+         'gender=M',
+         'profiles.profile.languagesSpoken.languageSpoken=en,sp'
+        )
+    """
+    attributes = (
+       "{}={}".format(mapPath(path), value)
+       for (path, value) in attributes
+    )
 
-    except TypeError:
-        raise TypeError("Plural, Object and JSON value types are not supported")
+    """
+    Join attributes with '|'.
+    Example output:
+        'gender=M|profiles.profile.languagesSpoken.languageSpoken=en,sp'
+    """
+    attributes = str.join('|', attributes)
+
+    """
+    Create row by joining uuid and attributes.
+    Example output:
+        'de305d54-75b4-431b-adb2-eb6b9e546014\tgender=M|profiles.profile.languagesSpoken.languageSpoken=en,sp\n'
+    """
+    row = "{}\t{}\n".format(record['uuid'], attributes)
 
     return row
 
