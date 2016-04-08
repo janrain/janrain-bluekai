@@ -48,7 +48,7 @@ def fromRecord(record, paths=None):
     """
     regex_mappings = [
         (path, re.compile(path.replace('.', r'(?:\.|\.\d+\.)')))
-        for path in (paths or [])
+        for path in (paths or ())
     ]
 
     """
@@ -88,12 +88,30 @@ def fromRecord(record, paths=None):
     )
 
     """
+    Ensure that all path requested are provided.
+    Example output:
+        (
+         ('gender', None, None),
+         ('gender', 'M'),
+         ('profiles.profile.languagesSpoken.languageSpoken', None, None),
+         ('profiles.profile.languagesSpoken.languageSpoken', 'profiles.0.profile.languagesSpoken.0.languageSpoken', 'en'),
+         ('profiles.profile.languagesSpoken.languageSpoken', 'profiles.0.profile.languagesSpoken.1.languageSpoken', 'sp')
+        )
+    """
+    walked_record = combineInOrder(
+        walked_record,
+        [(path, None, None) for path in sorted(paths or [])],
+        lambda x, y: x[0] >= y[0]
+    )
+
+    """
     Group by path
     Example output:
         (
-         ('gender': (('gender', 'M'))),
+         ('gender': (('gender', 'M'), ('gender', None))),
          ('profiles.profile.languagesSpoken.languageSpoken', (
-          ('profiles.profile.languagesSpoken.languageSpoken', profiles.0.profile.languagesSpoken.0.languageSpoken', 'en'),
+          ('profiles.profile.languagesSpoken.languageSpoken', None, None),
+          ('profiles.profile.languagesSpoken.languageSpoken', 'profiles.0.profile.languagesSpoken.0.languageSpoken', 'en'),
           ('profiles.profile.languagesSpoken.languageSpoken', 'profiles.0.profile.languagesSpoken.1.languageSpoken', 'sp')
          )
         )
@@ -141,6 +159,18 @@ def fromRecord(record, paths=None):
     row = "{}\t{}\n".format(record['uuid'], attributes)
 
     return row
+
+def combineInOrder(generator, sorted_items, compare_func):
+    item = sorted_items.pop(0) if len(sorted_items) else None
+    for generator_item in generator:
+        while item is not None and compare_func(generator_item, item):
+            yield item
+            item = sorted_items.pop(0) if len(sorted_items) else None
+        yield generator_item
+    if item is not None:
+        yield item
+    for item in sorted_items:
+        yield item
 
 def walk(obj, path=''):
     """

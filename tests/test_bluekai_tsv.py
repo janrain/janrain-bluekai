@@ -25,6 +25,12 @@ class bluekai_test(TestCase):
     expected = "a-b-c\t\n"
     self.assertEqual(actual, expected)
 
+  def test_fromRecord_with_extra_paths(self):
+    record = { "uuid": "a-b-c" }
+    actual = fromRecord(record, ["path1","path2"])
+    expected = "a-b-c\tpath1=|path2=\n"
+    self.assertEqual(actual, expected)
+
   def test_fromRecord_list_types(self):
     record = { "uuid": "a-b-c", "list": ["value1"] }
     with self.assertRaises(TypeError):
@@ -87,6 +93,12 @@ class bluekai_test(TestCase):
     record = { "uuid": "a-b-c", "plurals": [ { 'plural': "" }, { 'plural': "b" }]}
     actual = fromRecord(record, ["plurals.plural"])
     expected = "a-b-c\tplurals.plural=b\n"
+    self.assertEqual(actual, expected)
+
+  def test_fromRecord_plural_types_with_empty_lists(self):
+    record = { "uuid": "a-b-c", "plurals": [] }
+    actual = fromRecord(record, ["plurals.plural"])
+    expected = "a-b-c\tplurals.plural=\n"
     self.assertEqual(actual, expected)
 
   def test_fromRecord_plural_types_with_mapping(self):
