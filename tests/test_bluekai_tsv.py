@@ -3,6 +3,10 @@ from collections import OrderedDict
 from bluekai.bluekai_tsv import *
 from datetime import date
 from datetime import datetime
+from freezegun import freeze_time
+
+frozen_datetime="2016-01-02 10:20:30"
+frozen_date="2016-01-02"
 
 class bluekai_test(TestCase):
 
@@ -57,18 +61,20 @@ class bluekai_test(TestCase):
     expected = "a-b-c\tvalue=1\n"
     self.assertEqual(actual, expected)
 
+  @freeze_time(frozen_datetime)
   def test_fromRecord_datetime_types(self):
-    value = datetime.fromtimestamp(0)
+    value = datetime.now()
     record = { "uuid": "a-b-c", "value": value }
     actual = fromRecord(record, ["value"])
-    expected = "a-b-c\tvalue=1969-12-31 16:00:00\n"
+    expected = "a-b-c\tvalue={}\n".format(frozen_datetime)
     self.assertEqual(actual, expected)
 
+  @freeze_time(frozen_date)
   def test_fromRecord_date_types(self):
-    value = datetime.fromtimestamp(0)
+    value = date.today()
     record = { "uuid": "a-b-c", "value": value }
     actual = fromRecord(record, ["value"])
-    expected = "a-b-c\tvalue=1969-12-31 16:00:00\n"
+    expected = "a-b-c\tvalue={}\n".format(frozen_date)
     self.assertEqual(actual, expected)
 
   def test_fromRecord_plural_types(self):
