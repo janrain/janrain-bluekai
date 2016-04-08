@@ -1,6 +1,5 @@
 import re
 from itertools import groupby
-from itertools import chain
 
 def fromRecords(records, paths=[]):
     return str.join('', fromRecordsIterator(records, paths))
