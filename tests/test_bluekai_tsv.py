@@ -1,6 +1,12 @@
 from unittest import TestCase
 from collections import OrderedDict
 from bluekai.bluekai_tsv import *
+from datetime import date
+from datetime import datetime
+from freezegun import freeze_time
+
+frozen_datetime="2016-01-02 10:20:30"
+frozen_date="2016-01-02"
 
 class bluekai_test(TestCase):
 
@@ -33,16 +39,61 @@ class bluekai_test(TestCase):
     record = { "uuid": "a-b-c", "none": None }
     actual = fromRecord(record, ["none"])
     expected = "a-b-c\tnone=\n"
+    self.assertEqual(actual, expected)
+
+  def test_fromRecord_bool_types(self):
+    record = { "uuid": "a-b-c", "value": True }
+    actual = fromRecord(record, ["value"])
+    expected = "a-b-c\tvalue=True\n"
+    self.assertEqual(actual, expected)
+    record = { "uuid": "a-b-c", "value": False }
+    actual = fromRecord(record, ["value"])
+    expected = "a-b-c\tvalue=False\n"
+    self.assertEqual(actual, expected)
+
+  def test_fromRecord_int_types(self):
+    record = { "uuid": "a-b-c", "value": 0 }
+    actual = fromRecord(record, ["value"])
+    expected = "a-b-c\tvalue=0\n"
+    self.assertEqual(actual, expected)
+    record = { "uuid": "a-b-c", "value": 1 }
+    actual = fromRecord(record, ["value"])
+    expected = "a-b-c\tvalue=1\n"
+    self.assertEqual(actual, expected)
+
+  @freeze_time(frozen_datetime)
+  def test_fromRecord_datetime_types(self):
+    value = datetime.now()
+    record = { "uuid": "a-b-c", "value": value }
+    actual = fromRecord(record, ["value"])
+    expected = "a-b-c\tvalue={}\n".format(frozen_datetime)
+    self.assertEqual(actual, expected)
+
+  @freeze_time(frozen_date)
+  def test_fromRecord_date_types(self):
+    value = date.today()
+    record = { "uuid": "a-b-c", "value": value }
+    actual = fromRecord(record, ["value"])
+    expected = "a-b-c\tvalue={}\n".format(frozen_date)
+    self.assertEqual(actual, expected)
 
   def test_fromRecord_plural_types(self):
     record = { "uuid": "a-b-c", "plurals": [ { 'plural': "a" }, { 'plural': "b" }]}
     actual = fromRecord(record, ["plurals.plural"])
     expected = "a-b-c\tplurals.plural=a,b\n"
+    self.assertEqual(actual, expected)
+
+  def test_fromRecord_plural_types_with_empty_str(self):
+    record = { "uuid": "a-b-c", "plurals": [ { 'plural': "" }, { 'plural': "b" }]}
+    actual = fromRecord(record, ["plurals.plural"])
+    expected = "a-b-c\tplurals.plural=b\n"
+    self.assertEqual(actual, expected)
 
   def test_fromRecord_plural_types_with_mapping(self):
     record = { "uuid": "a-b-c", "plurals": [ { 'plural': "a" }, { 'plural': "b" }]}
     actual = fromRecord(record, {"plurals.plural": "plurals"})
     expected = "a-b-c\tplurals=a,b\n"
+    self.assertEqual(actual, expected)
 
   def test_fromRecord_plural_types_with_error(self):
     record = { "uuid": "a-b-c", "plurals": [ { 'plural': "a" }, { 'plural': "b" }]}
