@@ -38,8 +38,8 @@ class run_test(TestCase):
         do_job_mock.side_effect = exception
         run(self.job_mock, self.writter_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
         self.job_mock.stop.assert_called_once_with()
-        self.logger_mock.exception.assert_called_once_with(exception)
-        self.logger_mock.error.assert_called_once_with(error)
+        self.logger_mock.error.assert_called_with(str(exception))
+        self.logger_mock.error.assert_called_with(error)
         self.logger_mock.info.assert_has_calls([ call("start"), call("end (1 seconds)") ])
 
 class do_job_test(TestCase):
