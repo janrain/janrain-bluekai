@@ -15,7 +15,7 @@ def run(job, writter, config, logger, datalib, converter):
     except Exception as ex:
 
         err = str(ex)
-        logger.exception(ex)
+        logger.error(err)
 
     finally:
         if err:
