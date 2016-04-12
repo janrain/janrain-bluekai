@@ -16,6 +16,8 @@ def run(job, writter, config, logger, datalib, converter):
 
         err = str(ex)
         logger.error(err)
+        if config['DEBUG']:
+            logger.exception(ex)
 
     finally:
         if err:
