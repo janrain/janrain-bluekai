@@ -142,13 +142,26 @@ class models_test(TestCase):
 
         self.assertTrue(result)
 
-    def test_running(self):
+    def test_error_getter(self):
+
+        message = "test error message"
 
         job = JobModel()
-        job._error = "test error message"
+        job._error = message
         result = job.error
 
-        self.assertEqual(result, "test error message")
+        self.assertEqual(result, message)
+
+    def test_error_setter(self):
+
+        message = "test error message"
+
+        job = JobModel()
+        job.error = message
+        result = job.error
+
+        self.assertEqual(result, message)
+
 
     @freeze_time(frozen_datetime)
     @patch.object(JobModel, 'save')
