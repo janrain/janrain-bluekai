@@ -6,23 +6,23 @@ def run(job, writter, config, logger, datalib, converter):
 
     logger.info("start")
 
-    err = None
+    exception = None
 
     try:
 
         do_job(job, writter, config, logger, datalib, converter)
 
-    except Exception as ex:
+    except Exception as catch_exception:
 
-        err = str(ex)
-        logger.error(err)
-        if config['DEBUG']:
-            logger.exception(ex)
+        exception = catch_exception
 
     finally:
-        if err:
-            job.error = err
-            logger.error(err)
+        if exception:
+            error = str(exception)
+            job.error = error
+            logger.error(error)
+            if config['DEBUG']:
+                logger.exception(exception)
         # update db regardless
         job.stop()
         logger.info("end ({} seconds)".format(job.ended - job.started))

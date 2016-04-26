@@ -88,6 +88,10 @@ class JobModel(pynamodb.models.Model):
     def error(self):
         return self._error
 
+    @error.setter
+    def error(self, error):
+        self._error = error
+
     @classmethod
     def get(cls, config):
         app_id = cls.appId(config)
