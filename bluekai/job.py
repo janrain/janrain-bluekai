@@ -3,7 +3,7 @@ from .date_utils import fromRecordDateTime
 from .date_utils import toRecordDateTime
 from .records import recordsNewerThan
 
-def run(job, writterFactory, config, logger, datalib, converter):
+def run(job, writerFactory, config, logger, datalib, converter):
 
     logger.info("start")
 
@@ -11,7 +11,7 @@ def run(job, writterFactory, config, logger, datalib, converter):
 
     try:
 
-        do_job(job, writterFactory, config, logger, datalib, converter)
+        do_job(job, writerFactory, config, logger, datalib, converter)
 
     except Exception as catch_exception:
 
@@ -28,7 +28,7 @@ def run(job, writterFactory, config, logger, datalib, converter):
         job.stop()
         logger.info("end ({} seconds)".format(job.ended - job.started))
 
-def do_job(job, writterFactory, config, logger, datalib, converter):
+def do_job(job, writerFactory, config, logger, datalib, converter):
 
     last_updated = job.lastUpdated
 
@@ -53,7 +53,7 @@ def do_job(job, writterFactory, config, logger, datalib, converter):
         output += row
 
         if record_num % config['JANRAIN_BATCH_SIZE'] == 0:
-            with closing(writterFactory()) as fp:
+            with closing(writerFactory()) as fp:
                 fp.write(output)
             output = ""
             logger.debug("wrote record {}".format(record_num))
@@ -64,7 +64,7 @@ def do_job(job, writterFactory, config, logger, datalib, converter):
             job.lastupdated = last_updated
 
     if output:
-        with closing(writterFactory()) as fp:
+        with closing(writerFactory()) as fp:
             fp.write(output)
         logger.debug("wrote record {}".format(record_num))
 

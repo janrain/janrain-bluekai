@@ -14,8 +14,8 @@ class run_test(TestCase):
         self.config = {
         }
         self.jobModel_mock = Mock()
-        self.writter_mock = MagicMock()
-        self.writterFactory_mock = Mock(return_value=self.writter_mock)
+        self.writer_mock = MagicMock()
+        self.writerFactory_mock = Mock(return_value=self.writer_mock)
         self.logger_mock = Mock()
         self.datalib_mock = Mock()
         self.converter_mock = Mock()
@@ -26,7 +26,7 @@ class run_test(TestCase):
 
     @patch('bluekai.job.do_job')
     def test_with_out_errors(self, do_job_mock):
-        run(self.job_mock, self.writterFactory_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
+        run(self.job_mock, self.writerFactory_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
         self.job_mock.stop.assert_called_once_with()
         self.logger_mock.exception.assert_not_called()
         self.logger_mock.error.assert_not_called()
@@ -38,7 +38,7 @@ class run_test(TestCase):
         exception = Exception(error)
         do_job_mock.side_effect = exception
         self.config['DEBUG'] = True
-        run(self.job_mock, self.writterFactory_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
+        run(self.job_mock, self.writerFactory_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
         self.job_mock.stop.assert_called_once_with()
         self.logger_mock.error.assert_called_with(str(exception))
         self.logger_mock.exception.assert_called_with(exception)
@@ -57,8 +57,8 @@ class do_job_test(TestCase):
             'JANRAIN_BATCH_SIZE': 3,
         }
         self.jobModel_mock = Mock()
-        self.writter_mock = MagicMock()
-        self.writterFactory_mock = Mock(return_value=self.writter_mock)
+        self.writer_mock = MagicMock()
+        self.writerFactory_mock = Mock(return_value=self.writer_mock)
         self.logger_mock = Mock()
         self.converter_mock = Mock(return_value="test-row")
         self.job_mock = MagicMock()
@@ -78,7 +78,7 @@ class do_job_test(TestCase):
 
     def test_run(self):
 
-        do_job(self.job_mock, self.writterFactory_mock, self.config,
+        do_job(self.job_mock, self.writerFactory_mock, self.config,
             self.logger_mock, self.datalib_mock, self.converter_mock)
 
         self.converter_mock.assert_has_calls([
@@ -102,7 +102,7 @@ class do_job_test(TestCase):
         self.converter_mock.side_effect = TypeError
 
         with self.assertRaises(SystemExit):
-            do_job(self.job_mock, self.writter_mock, self.config,
+            do_job(self.job_mock, self.writer_mock, self.config,
                 self.logger_mock, self.datalib_mock, self.converter_mock)
 
         self.converter_mock.assert_has_calls([
