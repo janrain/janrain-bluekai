@@ -54,7 +54,7 @@ class do_job_test(TestCase):
             'JANRAIN_CLIENT_SECRET': 'test_janrain_client_secret',
             'JANRAIN_SCHEMA_NAME': 'test_janrain_schema_name',
             'JANRAIN_ATTRIBUTE_KEYS': '',
-            'JANRAIN_BATCH_SIZE': 2,
+            'JANRAIN_BATCH_SIZE': 3,
         }
         self.jobModel_mock = Mock()
         self.writter_mock = MagicMock()
@@ -88,7 +88,7 @@ class do_job_test(TestCase):
             call(self.records_iterator[3], ''),
         ])
         self.logger_mock.debug.assert_has_calls([
-            call("wrote record 2"),
+            call("wrote record 3"),
             call("wrote record 4"),
         ])
         self.logger_mock.info.assert_called_once_with("exported 4 records")
