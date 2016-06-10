@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from unittest import TestCase
+from datetime import datetime
 from mock import patch
 from bluekai.config import *
 from bluekai.config import _ENV_VARS
 from freezegun import freeze_time
+
+frozen_datetime="2016-01-02 12:00:01"
 
 class getConfigTests(TestCase):
 
@@ -59,11 +62,12 @@ class getConfigTests(TestCase):
         config = get_config()
         self.assertEqual(config['DICT'], {})
 
+@freeze_time(frozen_datetime)
 class remoteFilenameTests(TestCase):
 
-    frozen_datetime="2016-01-02 12:00:01"
+    def setUp(self):
+        self.date = datetime.now().timestamp()
 
-    @freeze_time(frozen_datetime)
     def test_with_clientName(self):
         config = {
             'BLUEKAI_PARTNERNAME': "partnername",
@@ -71,15 +75,20 @@ class remoteFilenameTests(TestCase):
             'BLUEKAI_SITEID': 'siteid',
         }
         actual = remote_filename(config)
-        expected = ("partnername_clientname_siteid_1451764801.0.bzip2", "partnername_clientname_siteid_1451764801.0.bzip2.trigger")
+        expected = (
+            "partnername_clientname_siteid_{}.bzip2".format(self.date),
+            "partnername_clientname_siteid_{}.bzip2.trigger".format(self.date)
+        )
         self.assertEqual(actual, expected)
 
-    @freeze_time(frozen_datetime)
     def test_without_clientName(self):
         config = {
             'BLUEKAI_PARTNERNAME': "partnername",
             'BLUEKAI_SITEID': 'siteid',
         }
         actual = remote_filename(config)
-        expected = ("partnername_siteid_1451764801.0.bzip2", "partnername_siteid_1451764801.0.bzip2.trigger")
+        expected = (
+            "partnername_siteid_{}.bzip2".format(self.date),
+            "partnername_siteid_{}.bzip2.trigger".format(self.date)
+        )
         self.assertEqual(actual, expected)
