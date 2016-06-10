@@ -6,11 +6,11 @@ import janrain_datalib
 import janrain_datalib.exceptions
 import janrain_datalib.utils
 from . import bluekai_tsv
-from .config import remote_filename
 from .job import run as jobRunner
 from .models import JobModel
 from .sftpproxy import SftpProxy
 from .date_utils import toRecordDateTime
+from .bluekai_writter import BlueKaiWritter
 
 
 def export():
@@ -21,19 +21,19 @@ def export():
 
     logger = logging.getLogger(config['LOGGER_NAME'])
 
-    _export(config, JobModel, SftpProxy, flask.current_app.threadexecutor, logger)
+    _export(config, JobModel, SftpProxy, BlueKaiWritter, flask.current_app.threadexecutor, logger)
 
     return "ok", 200
 
-def _export(config, JobModel, SftpProxy, threadexecutor, logger):
+def _export(config, JobModel, SftpProxy, Writter, threadexecutor, logger):
     job = JobModel.get(config)
 
     sftp = SftpProxy(paramiko, config, logger)
-    writter = sftp.file(remote_filename(config), mode='w', bufsize=config['SFTP_BUFFER_SIZE'])
+    writterFactory = lambda: Writter(sftp, config)
 
     if job.start():
         threadexecutor.submit(
-            jobRunner, job, writter, config, logger,
+            jobRunner, job, writterFactory, config, logger,
             janrain_datalib, bluekai_tsv.fromRecord)
     else:
         logger.warning("export job already running")
