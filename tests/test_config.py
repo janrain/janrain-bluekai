@@ -61,25 +61,25 @@ class getConfigTests(TestCase):
 
 class remoteFilenameTests(TestCase):
 
-    frozen_datetime="2016-01-02"
+    frozen_datetime="2016-01-02 12:00:01"
 
     @freeze_time(frozen_datetime)
-    def test_without_clientName(self):
+    def test_with_clientName(self):
         config = {
             'BLUEKAI_PARTNERNAME': "partnername",
             'BLUEKAI_CLIENTNAME': 'clientname',
             'BLUEKAI_SITEID': 'siteid',
         }
         actual = remote_filename(config)
-        expected = "partnername_clientname_siteid_20160102"
+        expected = ("partnername_clientname_siteid_1451764801.0.bzip2", "partnername_clientname_siteid_1451764801.0.bzip2.trigger")
         self.assertEqual(actual, expected)
 
     @freeze_time(frozen_datetime)
-    def test_with_clientName(self):
+    def test_without_clientName(self):
         config = {
             'BLUEKAI_PARTNERNAME': "partnername",
             'BLUEKAI_SITEID': 'siteid',
         }
         actual = remote_filename(config)
-        expected = "partnername_siteid_20160102"
+        expected = ("partnername_siteid_1451764801.0.bzip2", "partnername_siteid_1451764801.0.bzip2.trigger")
         self.assertEqual(actual, expected)
