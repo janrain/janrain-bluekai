@@ -1,3 +1,4 @@
+import bz2
 from . import bluekai_trigger
 from .config import remote_filename
 
@@ -9,7 +10,7 @@ class BlueKaiWriter():
 
     def write(self, data):
         trigger_data = bluekai_trigger.fromData(self.data_filename, data)
-        self.data_fp.write(data)
+        self.data_fp.write(bz2.compress(data.encode('utf8')))
         self.trigger_fp.write(trigger_data)
 
     def close(self):
