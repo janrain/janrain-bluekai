@@ -76,7 +76,7 @@ to elastic beanstalk)
 
 ### Install Dependencies
 
-* Create an Virtual Environment (Optional) `virtualenv venv && source ./venv/bin/activate`
+* Create an Virtual Environment (Optional) `virtualenv -p python3 venv && source ./venv/bin/activate`
 * Install dependencies `pip install -r requirements.txt`
 
 ### Run Application
