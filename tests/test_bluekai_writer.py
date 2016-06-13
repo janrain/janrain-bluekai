@@ -25,15 +25,15 @@ class bluekai_writer_test(TestCase):
 
   def test_init(self):
     self.writer_mock.file.assert_has_calls([
-      call('partnername_clientname_siteid_{}.bzip2'.format(self.date), mode='w'),
-      call('partnername_clientname_siteid_{}.bzip2.trigger'.format(self.date), mode='w'),
+      call('partnername_clientname_siteid_{}.bz2'.format(self.date), mode='w'),
+      call('partnername_clientname_siteid_{}.bz2.trigger'.format(self.date), mode='w'),
     ])
 
   def test_write(self):
     self.bluekai_writer.write(self.valid_data)
     self.file_mock.assert_has_calls([
       call.write(b'BZh91AY&SYs"\xc4\xde\x00\x00\x08I\x80\x000p\x02;\x80\x00\x04 \x00!*\x0fSOI\x90\x80h\x02\xa5A\x1d\x06H\xc9\xb1-\xd5\xbf|]\xc9\x14\xe1BA\xcc\x8b\x13x'),
-      call.write('FILE=partnername_clientname_siteid_{}.bzip2\nSIZE=26\nMD5SUM=5309154b2b0cd3ae147a0d5f4f39da31'.format(self.date))
+      call.write('FILE=partnername_clientname_siteid_{}.bz2\nSIZE=26\nMD5SUM=5309154b2b0cd3ae147a0d5f4f39da31'.format(self.date))
     ])
 
   def test_close(self):

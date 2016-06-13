@@ -59,7 +59,7 @@ def remote_filename(config):
     partnerName = config.get('BLUEKAI_PARTNERNAME')
     clientName = config.get('BLUEKAI_CLIENTNAME')
     siteId = config.get('BLUEKAI_SITEID')
-    extension = 'bzip2'
+    extension = 'bz2'
 
     date = datetime.now().timestamp()
 

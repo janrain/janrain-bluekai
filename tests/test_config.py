@@ -76,8 +76,8 @@ class remoteFilenameTests(TestCase):
         }
         actual = remote_filename(config)
         expected = (
-            "partnername_clientname_siteid_{}.bzip2".format(self.date),
-            "partnername_clientname_siteid_{}.bzip2.trigger".format(self.date)
+            "partnername_clientname_siteid_{}.bz2".format(self.date),
+            "partnername_clientname_siteid_{}.bz2.trigger".format(self.date)
         )
         self.assertEqual(actual, expected)
 
@@ -88,7 +88,7 @@ class remoteFilenameTests(TestCase):
         }
         actual = remote_filename(config)
         expected = (
-            "partnername_siteid_{}.bzip2".format(self.date),
-            "partnername_siteid_{}.bzip2.trigger".format(self.date)
+            "partnername_siteid_{}.bz2".format(self.date),
+            "partnername_siteid_{}.bz2.trigger".format(self.date)
         )
         self.assertEqual(actual, expected)
