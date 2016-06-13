@@ -57,7 +57,7 @@ to elastic beanstalk)
 
 - `REMOTE_PASSWORD`: Password of the BlueKai SFTP Server.
 
-- `REMOTE_RSA_KEY`: RSA Private Key file of the BlueKai SFTP Server (Optional is using username and password)
+- `REMOTE_RSA_KEY`: RSA Private Key file of the BlueKai SFTP Server (Optional if using username and password)
 
 - `BLUEKAI_PARTNERNAME`: BlueKai Partner Name.
 
