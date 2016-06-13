@@ -44,7 +44,8 @@ be kept. (default: `20`)
 
 - `AWS_DYNAMODB_URL`: Url of the DynamoDB service to use.
 (should only be used during local development, leave blank when deployed
-to elastic beanstalk)
+to elastic beanstalk. [Requires having .aws/credentials file for local 
+DynamoDB development](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html))
 
 - `AWS_DYNAMODB_TABLE`: Name of the table in DynamoDB to use.
 
