@@ -12,6 +12,7 @@ from bluekai.job import run as jobRunner
 from bluekai.sftpproxy import SftpProxy
 from bluekai.resources import export
 from bluekai.resources import _export
+from bluekai.bluekai_writer import BlueKaiWriter
 
 class export_test(TestCase):
 
@@ -23,10 +24,10 @@ class export_test(TestCase):
         }
         self.job_mock = Mock()
         self.sftp_mock = Mock()
-        self.writter_mock = Mock()
         self.last_updated = datetime.utcfromtimestamp(0)
         self.records_iterator = Mock()
         self.logging_mock = Mock()
+        self.writer_mock = Mock()
         self.sftpProxy_mock = Mock()
         self.threadexecutor_mock = Mock()
         self.jobModel_mock = Mock()
@@ -46,39 +47,33 @@ class export_test(TestCase):
 
                 self.assertEqual(result, ("ok", 200))
                 _export_mock.assert_called_once_with(
-                    self.config, JobModel, SftpProxy,
+                    self.config, JobModel, SftpProxy, BlueKaiWriter,
                     self.threadexecutor_mock, self.logging_mock)
 
     def test__export_starting_new_job(self):
 
         self.jobModel_mock.get.return_value = self.job_mock
         self.sftpProxy_mock.return_value = self.sftp_mock
-        self.sftp_mock.file.return_value = self.writter_mock
         self.job_mock.start.return_value = True
 
-        _export(self.config, self.jobModel_mock, self.sftpProxy_mock, self.threadexecutor_mock, self.logging_mock)
+        _export(self.config, self.jobModel_mock, self.sftpProxy_mock, self.writer_mock, self.threadexecutor_mock, self.logging_mock)
 
         self.jobModel_mock.get.assert_called_once_with(self.config)
         self.sftpProxy_mock.assert_called_once_with(paramiko, self.config, self.logging_mock)
-        self.sftp_mock.file.assert_called_once_with(None, mode='w', bufsize=self.config['SFTP_BUFFER_SIZE'])
         self.job_mock.start.assert_called_once_with()
-        self.threadexecutor_mock.submit.assert_called_once_with(
-            jobRunner, self.job_mock, self.writter_mock, self.config,
-            self.logging_mock, janrain_datalib, bluekai_tsv.fromRecord)
         self.logging_mock.warning.assert_not_called()
 
     def test__export_job_already_started(self):
 
         self.jobModel_mock.get.return_value = self.job_mock
         self.sftpProxy_mock.return_value = self.sftp_mock
-        self.sftp_mock.file.return_value = self.writter_mock
+        self.sftp_mock.file.return_value = self.writer_mock
         self.job_mock.start.return_value = False
 
-        _export(self.config, self.jobModel_mock, self.sftpProxy_mock, self.threadexecutor_mock, self.logging_mock)
+        _export(self.config, self.jobModel_mock, self.sftpProxy_mock, self.writer_mock, self.threadexecutor_mock, self.logging_mock)
 
         self.jobModel_mock.get.assert_called_once_with(self.config)
         self.sftpProxy_mock.assert_called_once_with(paramiko, self.config, self.logging_mock)
-        self.sftp_mock.file.assert_called_once_with(None, mode='w', bufsize=self.config['SFTP_BUFFER_SIZE'])
         self.job_mock.start.assert_called_once_with()
         self.threadexecutor_mock.submit.assert_not_called()
         self.logging_mock.warning.assert_called_once_with("export job already running")

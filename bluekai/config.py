@@ -59,11 +59,16 @@ def remote_filename(config):
     partnerName = config.get('BLUEKAI_PARTNERNAME')
     clientName = config.get('BLUEKAI_CLIENTNAME')
     siteId = config.get('BLUEKAI_SITEID')
+    extension = 'bzip2'
 
-    date = datetime.now().strftime("%Y%m%d")
+    date = datetime.now().timestamp()
 
     if partnerName and clientName and siteId:
-        return "{}_{}_{}_{}".format(partnerName, clientName, siteId, date)
+        data_filename = "{}_{}_{}_{}.{}".format(partnerName, clientName, siteId, date, extension)
 
     elif partnerName and siteId:
-        return "{}_{}_{}".format(partnerName, siteId, date)
+        data_filename = "{}_{}_{}.{}".format(partnerName, siteId, date, extension)
+
+    trigger_filename = '{}.trigger'.format(data_filename)
+
+    return (data_filename, trigger_filename)

@@ -1,8 +1,9 @@
+from contextlib import closing
 from .date_utils import fromRecordDateTime
 from .date_utils import toRecordDateTime
 from .records import recordsNewerThan
 
-def run(job, writter, config, logger, datalib, converter):
+def run(job, writerFactory, config, logger, datalib, converter):
 
     logger.info("start")
 
@@ -10,7 +11,7 @@ def run(job, writter, config, logger, datalib, converter):
 
     try:
 
-        do_job(job, writter, config, logger, datalib, converter)
+        do_job(job, writerFactory, config, logger, datalib, converter)
 
     except Exception as catch_exception:
 
@@ -27,7 +28,7 @@ def run(job, writter, config, logger, datalib, converter):
         job.stop()
         logger.info("end ({} seconds)".format(job.ended - job.started))
 
-def do_job(job, writter, config, logger, datalib, converter):
+def do_job(job, writerFactory, config, logger, datalib, converter):
 
     last_updated = job.lastUpdated
 
@@ -38,26 +39,34 @@ def do_job(job, writter, config, logger, datalib, converter):
 
     records_iterator = recordsNewerThan(capture_app, config, last_updated)
 
-    with writter as fp:
+    output = ""
+    record_num = 0
+    for record_num, record in enumerate(records_iterator, start=1):
 
-        record_num = 0
-        for record_num, record in enumerate(records_iterator, start=1):
+        try:
+            row = converter(record, config['JANRAIN_ATTRIBUTE_KEYS'])
+        except TypeError as exception:
+            message = str(exception)
+            logger.error(message)
+            raise SystemExit(message)
 
-            try:
-                row = converter(record, config['JANRAIN_ATTRIBUTE_KEYS'])
-            except TypeError as exception:
-                message = str(exception)
-                logger.error(message)
-                raise SystemExit(message)
+        output += row
 
-            fp.write(row)
+        if record_num % config['JANRAIN_BATCH_SIZE'] == 0:
+            with closing(writerFactory()) as fp:
+                fp.write(output)
+            output = ""
+            logger.debug("wrote record {}".format(record_num))
 
-            if record_num % config['JANRAIN_BATCH_SIZE'] == 0:
-                logger.debug("wrote record {}".format(record_num))
+        record_last_updated = fromRecordDateTime(record['lastUpdated'])
+        if not last_updated or record_last_updated > last_updated:
+            last_updated = fromRecordDateTime(record['lastUpdated'])
+            job.lastupdated = last_updated
 
-            record_last_updated = fromRecordDateTime(record['lastUpdated'])
-            if not last_updated or record_last_updated > last_updated:
-                last_updated = fromRecordDateTime(record['lastUpdated'])
-                job.lastupdated = last_updated
+    if output:
+        with closing(writerFactory()) as fp:
+            fp.write(output)
+        logger.debug("wrote record {}".format(record_num))
 
-        logger.info("exported {} records".format(record_num))
+    logger.info("exported {} records".format(record_num))
+

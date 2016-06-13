@@ -14,7 +14,8 @@ class run_test(TestCase):
         self.config = {
         }
         self.jobModel_mock = Mock()
-        self.writter_mock = Mock()
+        self.writer_mock = MagicMock()
+        self.writerFactory_mock = Mock(return_value=self.writer_mock)
         self.logger_mock = Mock()
         self.datalib_mock = Mock()
         self.converter_mock = Mock()
@@ -25,7 +26,7 @@ class run_test(TestCase):
 
     @patch('bluekai.job.do_job')
     def test_with_out_errors(self, do_job_mock):
-        run(self.job_mock, self.writter_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
+        run(self.job_mock, self.writerFactory_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
         self.job_mock.stop.assert_called_once_with()
         self.logger_mock.exception.assert_not_called()
         self.logger_mock.error.assert_not_called()
@@ -37,7 +38,7 @@ class run_test(TestCase):
         exception = Exception(error)
         do_job_mock.side_effect = exception
         self.config['DEBUG'] = True
-        run(self.job_mock, self.writter_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
+        run(self.job_mock, self.writerFactory_mock, self.config, self.logger_mock, self.datalib_mock, self.converter_mock)
         self.job_mock.stop.assert_called_once_with()
         self.logger_mock.error.assert_called_with(str(exception))
         self.logger_mock.exception.assert_called_with(exception)
@@ -53,12 +54,13 @@ class do_job_test(TestCase):
             'JANRAIN_CLIENT_SECRET': 'test_janrain_client_secret',
             'JANRAIN_SCHEMA_NAME': 'test_janrain_schema_name',
             'JANRAIN_ATTRIBUTE_KEYS': '',
-            'JANRAIN_BATCH_SIZE': 2,
+            'JANRAIN_BATCH_SIZE': 3,
         }
         self.jobModel_mock = Mock()
-        self.writter_mock = MagicMock()
+        self.writer_mock = MagicMock()
+        self.writerFactory_mock = Mock(return_value=self.writer_mock)
         self.logger_mock = Mock()
-        self.converter_mock = Mock()
+        self.converter_mock = Mock(return_value="test-row")
         self.job_mock = MagicMock()
         self.records_iterator = [
             { "lastUpdated": "2016-01-01 01:01:01.000000" },
@@ -76,11 +78,9 @@ class do_job_test(TestCase):
 
     def test_run(self):
 
-        do_job(self.job_mock, self.writter_mock, self.config,
+        do_job(self.job_mock, self.writerFactory_mock, self.config,
             self.logger_mock, self.datalib_mock, self.converter_mock)
 
-        self.writter_mock.__enter__.assert_called_once_with()
-        self.writter_mock.__exit__.assert_called_once_with(None, None, None)
         self.converter_mock.assert_has_calls([
             call(self.records_iterator[0], ''),
             call(self.records_iterator[1], ''),
@@ -88,7 +88,7 @@ class do_job_test(TestCase):
             call(self.records_iterator[3], ''),
         ])
         self.logger_mock.debug.assert_has_calls([
-            call("wrote record 2"),
+            call("wrote record 3"),
             call("wrote record 4"),
         ])
         self.logger_mock.info.assert_called_once_with("exported 4 records")
@@ -102,10 +102,9 @@ class do_job_test(TestCase):
         self.converter_mock.side_effect = TypeError
 
         with self.assertRaises(SystemExit):
-            do_job(self.job_mock, self.writter_mock, self.config,
+            do_job(self.job_mock, self.writer_mock, self.config,
                 self.logger_mock, self.datalib_mock, self.converter_mock)
 
-        self.writter_mock.__enter__.assert_called_once_with()
         self.converter_mock.assert_has_calls([
             call(self.records_iterator[0], ''),
         ])
