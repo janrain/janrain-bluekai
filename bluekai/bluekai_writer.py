@@ -9,8 +9,9 @@ class BlueKaiWriter():
         self.trigger_fp = writer.file(self.trigger_filename, mode='w')
 
     def write(self, data):
-        trigger_data = bluekai_trigger.fromData(self.data_filename, data)
-        self.data_fp.write(bz2.compress(data.encode('utf8')))
+        compressed_data = bz2.compress(data.encode('utf8'))
+        trigger_data = bluekai_trigger.fromData(self.data_filename, compressed_data)
+        self.data_fp.write(compressed_data)
         self.trigger_fp.write(trigger_data)
 
     def close(self):
