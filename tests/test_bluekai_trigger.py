@@ -5,7 +5,7 @@ class bluekai_trigger_test(TestCase):
 
   def setUp(self):
     self.filename = "testfilename"
-    self.valid_data = "abc\ta=1|b=2\nefg\ta=10|b=20\n"
+    self.valid_data = b"abc\ta=1|b=2\nefg\ta=10|b=20\n"
 
   def test_fromData(self):
     actual = fromData(self.filename, self.valid_data)
