@@ -5,8 +5,9 @@ from bluekai import logging_init
 from bluekai import get_config
 from bluekai.models import JobModel
 
+config = get_config()
+application = create_app(config, JobModel)
+logging_init(application)
+
 if __name__ == '__main__':
-    config = get_config()
-    application = create_app(config, JobModel)
-    logging_init(application)
     application.run()
