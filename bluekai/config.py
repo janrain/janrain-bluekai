@@ -11,7 +11,7 @@ _ENV_VARS = {
     'APP_LOG_NUM_BACKUPS': 20,
     'AWS_DEFAULT_REGION': '',
     'AWS_DYNAMODB_TABLE': '',
-    'AWS_DYNAMODB_URL': '',
+    'AWS_DYNAMODB_URL': None,
     'JANRAIN_URI': '',
     'JANRAIN_CLIENT_ID': '',
     'JANRAIN_CLIENT_SECRET': '',
