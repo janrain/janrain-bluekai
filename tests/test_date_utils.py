@@ -16,7 +16,7 @@ class record_datetime_test(TestCase):
 
   def test_toRecordDateTime(self):
     actual = toRecordDateTime(self.datetime_object)
-    expected = self.datetime_string.replace(' +0000', '')
+    expected = "1970-01-01 00:00:00"
     self.assertEqual(actual, expected)
 
   def test_fromModelDateTime(self):
