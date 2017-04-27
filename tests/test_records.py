@@ -32,7 +32,7 @@ class models_test(TestCase):
         capture_app_mock.get_schema.assert_called_once_with(config['JANRAIN_SCHEMA_NAME'])
 
         capture_schema_mock.records.iterator.assert_called_once_with(
-            filtering="lastUpdated > '{}'".format(datetime_now.strftime("%Y-%m-%d %H:%M:%S.%f")),
+            filtering="lastUpdated > '{}'".format(datetime_now.strftime("%Y-%m-%d %H:%M:%S")),
             batch_size=config['JANRAIN_BATCH_SIZE'],
             attributes=['a', 'lastUpdated', 'uuid']
         )
@@ -60,7 +60,7 @@ class models_test(TestCase):
         capture_app_mock.get_schema.assert_called_once_with(config['JANRAIN_SCHEMA_NAME'])
 
         capture_schema_mock.records.iterator.assert_called_once_with(
-            filtering="lastUpdated > '{}'".format(datetime_now.strftime("%Y-%m-%d %H:%M:%S.%f")),
+            filtering="lastUpdated > '{}'".format(datetime_now.strftime("%Y-%m-%d %H:%M:%S")),
             batch_size=config['JANRAIN_BATCH_SIZE'],
             attributes=['lastUpdated', 'uuid']
         )
