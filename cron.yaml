@@ -1,5 +1,5 @@
 version: 1
 cron:
- - name: "sync"
-   url: "/sync"
+ - name: "export"
+   url: "/export"
    schedule: "* * * * *"
